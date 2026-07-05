@@ -1,10 +1,10 @@
-# 📄 AI-Powered PDF Chatbot using RAG
+# 📄 AI-Powered Document Chatbot using RAG
 
 ## Overview
 
-This project is an AI-powered PDF Chatbot that allows users to upload PDF documents and ask questions about their content. The system uses Retrieval-Augmented Generation (RAG) to retrieve relevant information from uploaded PDF and generate accurate responses using a Large Language Model (LLM).
+This project is an AI-powered Document Chatbot that allows users to upload documents and ask questions about their content. The system uses Retrieval-Augmented Generation (RAG) to retrieve relevant information from uploaded documents and generate accurate responses using a Large Language Model (LLM).
 
-The application combines a React frontend, Node.js backend, and FastAPI-based AI service to provide an interactive question-answering experience over PDF documents.
+The application combines a React frontend, Node.js backend, and FastAPI-based AI service to provide an interactive question-answering experience over documents.
 
 ---
 
@@ -19,7 +19,7 @@ Node.js + Express Backend
        ▼
 FastAPI AI Service
        │
-       ├── PDF Processing (PyPDF)
+       ├── Document Processing (langchain-docling and PyPDF)
        ├── Text Splitting
        ├── Embedding Generation
        ├── ChromaDB Vector Store
@@ -31,14 +31,14 @@ FastAPI AI Service
 
 ## Features
 
-* Upload PDF documents
-* Extract text from PDFs
+* Upload documents
+* Extract text from documents
 * Intelligent text chunking
 * Generate embeddings using Hugging Face models
 * Store embeddings in ChromaDB
 * Semantic similarity search
 * Retrieval-Augmented Generation (RAG)
-* Ask questions about uploaded PDFs
+* Ask questions about uploaded documents
 * Context-aware responses
 * Microservice architecture using Node.js and FastAPI
 
@@ -60,6 +60,7 @@ FastAPI AI Service
 
 * FastAPI
 * LangChain
+* langchain-docling
 
 ### Vector Database
 
@@ -74,9 +75,9 @@ FastAPI AI Service
 
 * Groq API
 
-### PDF Processing
+### Document Processing
 
-* PyPDF
+* langchain-docling
 
 ---
 
@@ -243,12 +244,12 @@ pip install fastapi
 pip install uvicorn
 pip install langchain
 pip install chromadb
-pip install pypdf
 pip install sentence-transformers
 pip install langchain-community
 pip install langchain-huggingface
 pip install langchain-text-splitters
 pip install groq
+pip install langchain-docling
 ```
 
 ---
@@ -256,7 +257,7 @@ pip install groq
 ### Alternative Installation
 
 ```bash
-pip install fastapi uvicorn langchain chromadb pypdf sentence-transformers langchain-community langchain-huggingface langchain-text-splitters groq
+pip install fastapi uvicorn langchain chromadb pypdf sentence-transformers langchain-community langchain-huggingface langchain-text-splitters groq langchain-docling
 ```
 
 ---
