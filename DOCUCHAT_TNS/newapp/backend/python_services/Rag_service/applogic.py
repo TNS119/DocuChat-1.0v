@@ -21,7 +21,7 @@ from config.mongodb import (
     save_chat_turn,
     get_chat_history
 )
-from documents_reader import read_Document
+from Rag_service.documents_reader import read_Document
 
 #Saved upto here 143
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
@@ -131,6 +131,8 @@ def Rag_core(given_data):
             
         # loader = PyPDFLoader(file_path)
         # docs = loader.load()
+
+        
         docs = read_Document(file_path)
         print(f" ✓Loaded {len(docs)} Docling chunks")
 
