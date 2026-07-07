@@ -1,11 +1,11 @@
 fastapi==0.138.0
 
 uvicorn
-pypdf
 certifi
 chromadb
 langchain
 langchain-core
+cloudinary
 
 huggingface_hub==1.20.1
 langchain_chroma==1.1.0

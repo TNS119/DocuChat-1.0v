@@ -5,11 +5,12 @@ from pprint import pprint
 import re
 import shutil
 
-env_path = os.path.join(os.path.dirname(__file__), "app.env")
-load_dotenv(env_path)
+# env_path = os.path.join(os.path.dirname(__file__), ".env")
+load_dotenv()
 
 from langchain_groq import ChatGroq
-from langchain_community.document_loaders import PyPDFLoader
+# from langchain_community.document_loaders import PyPDFLoader
+from langchain_community.vectorstores.utils import filter_complex_metadata
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 # from langchain_huggingface import HuggingFaceEmbeddings
 # from langchain_huggingface import HuggingFaceEndpointEmbeddings
@@ -98,7 +99,7 @@ def Rag_core(given_data):
 
         recent_history = history[-2:]
 
-        print(f"Recent history: {recent_history}")
+        # print(f"Recent history: {recent_history}")
 
         topic_name = given_data.get("topic_name", "default")
         print(f"Processing topic: {topic_name}")
@@ -132,8 +133,9 @@ def Rag_core(given_data):
         # loader = PyPDFLoader(file_path)
         # docs = loader.load()
 
-        
+
         docs = read_Document(file_path)
+        docs = filter_complex_metadata(docs)
         print(f" ✓Loaded {len(docs)} Docling chunks")
 
         text_splitter = RecursiveCharacterTextSplitter(
@@ -177,28 +179,18 @@ def Rag_core(given_data):
             context, source_docs = retrieve_context(user_query, k=5)
 
             # print(f"the pdf lines are {context}")
-            print(f"********************the input query is  {user_query}")
+            print(f"********************the input query is  \"{user_query}\"")
             system_message = f"""You are a helpful PDF Chatbot.with No hallucinations, only provided contex content as response.
-
                                     Use the provided PDF context to answer user questions accurately.
-
                                     If the user asks a question that can be answered from the PDF context, answer using the context.
-
                                     If the user asks a follow-up question, use the conversation history to understand the reference, but answer based on the PDF context.
-
                                     If the PDF does not contain enough information to answer the question, politely say that the information was not found in the 
                                     uploaded PDF.(initially inform its not there in provided contex and bring back to given context again and dont ask for new context(ignore it))
-
                                     provide horizontal seperation lines in between the response section for clarity easy understanding of each part of it only if required.
-                                    
                                     Never reveal your reasoning process.
-
                                     Answer directly without mentioning the PDF unless the user asks.
-
                                     Do not output <think>, reasoning, analysis, internal thoughts, or step-by-step deliberation.
-
                                     Do not make up facts that are not supported by the PDF context.(halucinate).
-
                                     Try to extend the convo within contex for further assistance(only inside pdf context).
                                     Don't make up any new information:
                                 Context:
@@ -268,9 +260,9 @@ def Rag_core(given_data):
             result = Quering(given_data["query"], vector_store)
             # print(result["context_used"])
 
-            print(result["answer"])
+            # print(result["answer"])
             answer = clean_response(result["answer"])
-            
+            print("Response sent...")
             return answer
         else:
             raise ValueError("Invalid request: must provide 'query' and optionally 'pdf_path'")

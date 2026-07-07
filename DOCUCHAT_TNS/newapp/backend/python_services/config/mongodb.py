@@ -59,7 +59,7 @@ def save_chat_turn(session_id, user_query, assistant_response):
     return result.modified_count == 1
 
 def get_chat_history(session_id):
-    print(">>>>>>>>>>>>>>Giving history to LLM")
+    # print(">>>>>>>>>>>>>>Giving history to LLM")
     session = chat_collection.find_one(
         {"_id": session_id}
     )

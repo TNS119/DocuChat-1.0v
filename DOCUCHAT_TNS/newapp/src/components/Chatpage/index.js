@@ -47,9 +47,9 @@ const Chatpage = () =>{
     const getResponseFromLLM =async (query)=>{
         setMsgStatus(MessageStatusConstants.inprogress)
         try{
-            console.log("sent request to nodejs(port 5000)")
+            console.log("sent request to Backend")
             const response = await fetch(
-                "https://pdfchat3-aa.onrender.com/response",
+                "http://localhost:8000/response",
                 {
                     method: "POST",
                     headers:{
@@ -64,7 +64,7 @@ const Chatpage = () =>{
                 }
             )
             
-            console.log("got response from  nodejs(port 5000)")
+            console.log("got response from  Backend")
             if(!response.ok){
                 throw new Error(`response failed from FASTAPI: ${response.statusText}`);
             }

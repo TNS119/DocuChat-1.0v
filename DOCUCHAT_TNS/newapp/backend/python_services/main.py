@@ -1,13 +1,14 @@
+import os
+import tempfile
 from fastapi import FastAPI
 from pydantic import BaseModel
-from fastapi import Request
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi import UploadFile, File, Form
 
+from services.cloudinary_service import upload_pdf
 from Rag_service.applogic import Rag_core
 
 
-from fastapi import UploadFile, File, Form
-import tempfile
-import os
 
 class ResponseRequest(BaseModel):
     query: str
@@ -16,7 +17,16 @@ class ResponseRequest(BaseModel):
     topic_name: str
 
 app = FastAPI()
-# PDF_PATH_FOR_RAG = None
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000"
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 @app.get("/")
 def home():
@@ -25,10 +35,10 @@ def home():
     }
 
 
-@app.post("/process")
+@app.post("/process/{topic}")
 async def process_pdf(
+    topic: str,
     pdf: UploadFile = File(...),
-    topic: str = Form(...),
     session_id: str = Form(...)
 ):
     pdf_path = None
@@ -38,6 +48,14 @@ async def process_pdf(
 
         # Read uploaded PDF
         contents = await pdf.read()
+
+        cloudinary_result = upload_pdf(
+            file_bytes=contents,
+            filename=pdf.filename,
+            topic=topic
+        )
+
+        print(cloudinary_result)
 
         # Create temporary PDF file
         temp_pdf = tempfile.NamedTemporaryFile(
@@ -60,6 +78,7 @@ async def process_pdf(
             "query": "Greetings to you!",
             "status": True,
             "pdf_path": pdf_path,
+            "cloudinary_url": cloudinary_result["secure_url"],
             "topic_name": topic,
         }
         
@@ -73,7 +92,8 @@ async def process_pdf(
         return {
             "response_msg": query_response,
             "sender": "bot",
-            "pdf_path": pdf_path
+            "cloudinary_uploaded": cloudinary_result["uploaded"],
+            "cloudinary_url": cloudinary_result["secure_url"]
         }
 
     except Exception as e:
@@ -121,6 +141,7 @@ def query_response(data: ResponseRequest):
             "response_msg": f"Error processing query: {str(e)}",
             "sender": "error"
         }, 500
+        
     
     
 

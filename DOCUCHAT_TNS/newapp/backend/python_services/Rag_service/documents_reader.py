@@ -12,4 +12,3 @@ def read_Document(file_path):
      
     return docs
 
-
