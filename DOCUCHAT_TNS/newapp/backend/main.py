@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi import UploadFile, File, Form
 
 from services.cloudinary_service import upload_pdf
-from Rag_service.applogic import Rag_core
+from Rag.rag_service import Rag_core
 
 
 

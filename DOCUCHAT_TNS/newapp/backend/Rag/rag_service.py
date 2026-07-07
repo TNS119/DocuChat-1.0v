@@ -15,14 +15,14 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 # from langchain_huggingface import HuggingFaceEmbeddings
 # from langchain_huggingface import HuggingFaceEndpointEmbeddings
 from langchain_chroma import Chroma
-from utils.embeddings import HFEmbedding
-from config.mongodb import (
+from DOCUCHAT_TNS.newapp.backend.Rag.embeddings import HFEmbedding
+from DOCUCHAT_TNS.newapp.backend.services.mongodb import (
     create_session,
     session_exists,
     save_chat_turn,
     get_chat_history
 )
-from Rag_service.documents_reader import read_Document
+from services.documents_reader import read_Document
 
 #Saved upto here 143
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
