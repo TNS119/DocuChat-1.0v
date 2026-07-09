@@ -12,6 +12,7 @@ from langchain_groq import ChatGroq
 # from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.vectorstores.utils import filter_complex_metadata
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_core.documents import Document
 # from langchain_huggingface import HuggingFaceEmbeddings
 # from langchain_huggingface import HuggingFaceEndpointEmbeddings
 from langchain_chroma import Chroma
@@ -22,7 +23,8 @@ from services.mongodb import (
     save_chat_turn,
     get_chat_history
 )
-from services.documents_reader import read_Document
+# from DOCUCHAT_TNS.modal_service.docling_service.documents_reader import read_Document
+from services.modal_service import extract_documents
 
 #Saved upto here 143
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
@@ -38,7 +40,7 @@ def get_vector_store(topic_name,session_id, embeddings):
     safe_topic_name = re.sub(r'[^a-z0-9\s]', '', safe_topic_name) 
     safe_topic_name = re.sub(r'\s+', '_', safe_topic_name)  
     
-    db_path = f"./chroma_langchain_db/{safe_topic_name}/{session_id}"
+    db_path = f"./chroma_langchain_db/{session_id}/{safe_topic_name}"
     
     # Check if database already exists on disk
     if os.path.exists(db_path):
@@ -133,9 +135,26 @@ def Rag_core(given_data):
         # loader = PyPDFLoader(file_path)
         # docs = loader.load()
 
+        # docs = read_Document(file_path)
+        # docs = filter_complex_metadata(docs)
 
-        docs = read_Document(file_path)
+        with open(file_path, "rb") as pdf_file:
+            pdf_bytes = pdf_file.read()
+
+        docs_json = extract_documents(pdf_bytes)
+
+        docs = [
+            Document(
+                page_content=doc["page_content"],
+                metadata=doc["metadata"]
+            )
+            for doc in docs_json
+        ]
+
         docs = filter_complex_metadata(docs)
+
+
+        # 
         print(f" ✓Loaded {len(docs)} Docling chunks")
 
         text_splitter = RecursiveCharacterTextSplitter(

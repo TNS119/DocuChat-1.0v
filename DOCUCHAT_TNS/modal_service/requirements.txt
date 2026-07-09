@@ -1,0 +1,5 @@
+modal
+docling
+langchain-docling
+fastapi
+python-multipart
