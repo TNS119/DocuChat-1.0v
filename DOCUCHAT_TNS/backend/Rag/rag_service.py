@@ -95,7 +95,7 @@ def Rag_core(given_data):
 
         history = get_chat_history(session_id)
 
-        recent_history = history[-2:]
+        recent_history = history[-3:]
 
         # print(f"Recent history: {recent_history}")
 
@@ -179,7 +179,7 @@ def Rag_core(given_data):
 
     def Quering(input_query, vector_store):
         
-        def retrieve_context(query: str, k: int = 5):
+        def retrieve_context(query: str, k: int = 3):
             retrieved_docs = vector_store.similarity_search(query, k=k)
 
             docs_content = ""
@@ -191,7 +191,7 @@ def Rag_core(given_data):
 
 
         def ask_about_pdf(user_query):
-            context, source_docs = retrieve_context(user_query, k=5)
+            context, source_docs = retrieve_context(user_query, k=3)
 
             # print(f"the pdf lines are {context}")
             print(f"********************the input query is  \"{user_query}\"")
