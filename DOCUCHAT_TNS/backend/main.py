@@ -16,12 +16,15 @@ class ResponseRequest(BaseModel):
     session_id: str
     topic_name: str
 
+    
 app = FastAPI()
+origins=[
+    "http://localhost:3000",
+    "https://docu-chat-tns.vercel.app"
+]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "`https://docuchat-pqz3.onrender.com"
-    ],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
