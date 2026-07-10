@@ -31,6 +31,7 @@ const Home =(props) =>{
             formData.append("session_id",session_id)
             const response = await fetch(
                 `https://docuchat-pqz3.onrender.com/process/${topic}`,
+                
                 {
                     method: "POST",
                     body: formData,

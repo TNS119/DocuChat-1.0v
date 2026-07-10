@@ -20,7 +20,7 @@ app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:3000"
+        "`https://docuchat-pqz3.onrender.com"
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -42,7 +42,7 @@ async def process_pdf(
     session_id: str = Form(...)
 ):
     pdf_path = None
-
+    print("Processing PDF")
     try:
         # global PDF_PATH_FOR_RAG
 
@@ -118,6 +118,7 @@ async def process_pdf(
   
 @app.post("/response")  
 def query_response(data: ResponseRequest):
+    print("Responding query")
     try:
         query_data ={
         "query": data.query,
