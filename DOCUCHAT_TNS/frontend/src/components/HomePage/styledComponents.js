@@ -39,7 +39,7 @@ export const LoadingContainer = styled.div`
 
 export const Heading = styled.h1`
     font-family: roboto;
-    color: ${props => props.color};
+    color: rgb(16, 189, 242);
 `
 export const Labels = styled.label`
     margin-bottom: 8px;

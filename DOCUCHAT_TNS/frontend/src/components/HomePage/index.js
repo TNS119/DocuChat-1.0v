@@ -86,7 +86,7 @@ const Home =(props) =>{
 
     const renderInputForm = ()=>(
         <FormElement onSubmit={submission}>
-            <Heading color="rgb(16, 189, 242)">DOCUCHART</Heading>
+            <Heading>DOCUCHART</Heading>
             <Labels htmlFor="topic">Enter the topic</Labels>
             <InputEle id="topic" type="text" onChange={topicChange} value={topic}/>
             <UploadWrapper>

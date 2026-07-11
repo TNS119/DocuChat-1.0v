@@ -4,25 +4,36 @@ export const ChatContainer= styled.div`
     background-image: url('https://res.cloudinary.com/da00pyggy/image/upload/v1780423651/chat_bg_q2psr4.jpg');
     background-size: cover;
     height: 100vh;
-    padding: 24px;
+    padding: 24px 24px 24px 0px;
     color: #ffffff;
     font-family: roboto;
     display:flex;
-    flex-direction: column;
-    justify-content: start;
+    flex-direction: row;
+    justify-content: center;
     align-items: center;
-    overflow: hidden;
 
     @media (max-width: 768px) {
         background-image: url('https://res.cloudinary.com/da00pyggy/image/upload/v1782409611/copy_of_8e8f4f38-d842-4ff4-aa2a-4651533096dc.png');
     }
 `
+
+export const MessagesSubContainer = styled.div`
+    width: 80%;
+    height: 100%;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; 
+    
+`
+
 export const InputTab = styled.form`
     background-color: #ffffff61;
     border-radius: 0px 0px 30px 30px;
-    padding: 12px;
-    width: 100%;
-    text-align:left;
+    padding: 16px;
+    width: 96%;
+    text-align:center;
     display:flex;
     align-items:center;
     flex-shrink: 0;
@@ -38,6 +49,7 @@ export const InputBox = styled.input`
     text-align:left;
     font-size: 16px;
     margin-left: 16px;
+    
 
     &::placeholder{
         color: #faf5f5;
@@ -55,7 +67,7 @@ export const EnterButn = styled.button`
 
 export const MessagesContainer = styled.div`
     flex: 1;
-    width: 100%;
+    height:100%;
     background-color: #36dbf414;
     color: #ffffff;
     display: flex;
@@ -63,8 +75,7 @@ export const MessagesContainer = styled.div`
     justify-content: flex-start;
     gap: 12px;
     margin: 12px 24px;
-    margin-bottom: 0px;
-    padding: 12px;
+    padding: 16px;
     margin-bottom: 4px;
     border-radius: 8px 8px 0px 0px;
     overflow-y: auto;

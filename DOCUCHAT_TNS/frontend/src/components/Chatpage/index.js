@@ -4,8 +4,9 @@ import { IoArrowBackCircle } from "react-icons/io5";
 import { FaRedo } from "react-icons/fa";
 import { FaCircleArrowUp } from "react-icons/fa6";
 import {MagnifyingGlass} from 'react-loader-spinner'
-import {ChatContainer,ChatHeadSection, TopicHeading, HeadContainer, InputTab,InputBox,MessagesContainer,ErrText,EnterButn, BackButton,LoadingContainer,RetrySection,RetryButton,TokenInfoSEC} from "./styledComponents"
+import {ChatContainer,ChatHeadSection, MessagesSubContainer, TopicHeading, HeadContainer, InputTab,InputBox,MessagesContainer,ErrText,EnterButn, BackButton,LoadingContainer,RetrySection,RetryButton,TokenInfoSEC} from "./styledComponents"
 import Message from "../Message"
+import SideNavBar from "../SideNavbar"
 
 
 const MessageStatusConstants = {
@@ -92,6 +93,7 @@ const Chatpage = () =>{
         
     }
 
+
     const onEnterInput = (event)=>{
         event.preventDefault()
         getResponseFromLLM(userInput,false)
@@ -153,31 +155,33 @@ const Chatpage = () =>{
 
     return(
         <ChatContainer>
-            <ChatHeadSection>
-                <BackButton onClick={onBackInput}>
-                    <IoArrowBackCircle size={"32px"}/>
-                </BackButton>
-                <HeadContainer>
-                    <TopicHeading>{state.title}</TopicHeading>
-                </HeadContainer>
-                
-            </ChatHeadSection>
-            <MessagesContainer>
-                {responseMsgs.map(each => (
-                    <Message key={each.id} msgcontent={each.message} msgsource={each.sender}/>
-                ))}
-                {getStatusSec()}
-                <div ref={messagesEndRef} />
-            </MessagesContainer>
-            <InputTab onSubmit={onEnterInput}>
-                <InputBox 
-                    type="text" 
-                     autoComplete="off"
-                    placeholder="Ask Anything about PDF..." 
-                    onChange={inputChange} value={userInput}
-                />
-                {userInput !== "" && <EnterButn type="submit"><FaCircleArrowUp /></EnterButn>}
-            </InputTab>
+            <SideNavBar />
+            <MessagesSubContainer>
+                <ChatHeadSection>
+                    <BackButton onClick={onBackInput}>
+                        <IoArrowBackCircle size={"32px"}/>
+                    </BackButton>
+                    <HeadContainer>
+                        <TopicHeading>{state.title}</TopicHeading>
+                    </HeadContainer>
+                </ChatHeadSection>
+                <MessagesContainer>
+                    {responseMsgs.map(each => (
+                        <Message key={each.id} msgcontent={each.message} msgsource={each.sender}/>
+                    ))}
+                    {getStatusSec()}
+                    <div ref={messagesEndRef} />
+                </MessagesContainer>
+                <InputTab onSubmit={onEnterInput}>
+                    <InputBox 
+                        type="text" 
+                        autoComplete="off"
+                        placeholder="Ask Anything about PDF..." 
+                        onChange={inputChange} value={userInput}
+                    />
+                    {userInput !== "" && <EnterButn type="submit"><FaCircleArrowUp /></EnterButn>}
+                </InputTab>
+            </MessagesSubContainer>
         </ChatContainer>
     )
 }
