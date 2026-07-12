@@ -44,13 +44,14 @@ const Chatpage = () =>{
         setUserInput(event.target.value)
     }
 
-
+    // http://localhost:8000/response
+    // https://docuchat-pqz3.onrender.com/response
     const getResponseFromLLM =async (query)=>{
         setMsgStatus(MessageStatusConstants.inprogress)
         try{
             console.log("sent request to Backend")
             const response = await fetch(
-                "https://docuchat-pqz3.onrender.com/response",
+                "http://localhost:8000/response",
                 {
                     method: "POST",
                     headers:{

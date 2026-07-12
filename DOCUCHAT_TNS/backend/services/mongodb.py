@@ -15,6 +15,12 @@ client = MongoClient(
 
 db = client["PDFCHAT"]
 chat_collection = db["chat_history"]
+users_collection = db["users"]
+
+users_collection.create_index(
+    "username",
+    unique=True
+)
 
 try:
     client.admin.command("ping")
@@ -23,10 +29,10 @@ except Exception as e:
     print("❌ MongoDB Connection Failed")
     print(e)
 
-def create_session(session_id, topicname):
-    # print("👍 Session_history Created")
+def create_session(session_id, topicname, username):    # print("👍 Session_history Created")
     chat_collection.insert_one({
             "_id": session_id,
+            "username": username,
             "topic": topicname,
             "messages":[]
     })

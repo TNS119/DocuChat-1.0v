@@ -14,10 +14,11 @@ export const SideBarContainer = styled.div`
 export const Heading = styled.h1`
     font-family: roboto;
     color: rgb(16, 189, 242);
-    
     // @media(max-width: 800px){
     //     display:none;
     // }
-
 `
+
+
+
 

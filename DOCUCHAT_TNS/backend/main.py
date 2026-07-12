@@ -9,6 +9,8 @@ from services.cloudinary_service import upload_pdf
 from Rag.rag_service import Rag_core
 
 
+from auth.auth_router import router as auth_router
+
 
 class ResponseRequest(BaseModel):
     query: str
@@ -18,6 +20,8 @@ class ResponseRequest(BaseModel):
 
     
 app = FastAPI()
+app.include_router(auth_router)
+
 origins=[
     "http://localhost:3000",
     "https://docu-chat-tns.vercel.app"
