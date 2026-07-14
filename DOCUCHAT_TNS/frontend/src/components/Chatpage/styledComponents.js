@@ -67,6 +67,7 @@ export const EnterButn = styled.button`
 
 export const MessagesContainer = styled.div`
     flex: 1;
+    width: 96%;
     height:100%;
     background-color: #36dbf414;
     color: #ffffff;

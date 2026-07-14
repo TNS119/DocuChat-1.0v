@@ -1,8 +1,9 @@
 import {useNavigate} from "react-router-dom"
-import {useState} from "react"
+import {useEffect, useState} from "react"
 import {v4 as uuidv4} from 'uuid'
 import {Watch} from 'react-loader-spinner'
-import {FormContainer, FormElement,LoadingContainer,LoadingText,Heading,Labels,InputEle , UploadWrapper, CustomLabel, HiddenInput,FileDisplayBox,SubmitButton, RetryTxt, RetryButton} from "./styledComponents"
+import { buildApiUrl } from '../../api'
+import {FormContainer, FormElement,LoadingContainer,LoadingText,Heading,Labels,InputEle , UploadWrapper, CustomLabel, HiddenInput,FileDisplayBox,SubmitButton, RetryTxt, RetryButton, ActionRow} from "./styledComponents"
 
 
 
@@ -20,6 +21,29 @@ const Home =(props) =>{
     const [topic,setTopic] = useState("")
     const [uploadStatus, setUploadStatus] = useState(UploadStatusConstants.success)
     const [file,setFile] = useState(null)
+    const [latestSession, setLatestSession] = useState(null)
+
+    useEffect(() => {
+        const loadLatestSession = async () => {
+            try {
+                const response = await fetch(buildApiUrl("/auth/sessions"), {
+                    credentials: "include"
+                })
+                if (!response.ok) {
+                    return
+                }
+                const data = await response.json()
+                if (data?.sessions?.length) {
+                    const lastSession = data.sessions[data.sessions.length - 1]
+                    setLatestSession(lastSession)
+                }
+            } catch (error) {
+                console.log("Unable to load latest session", error)
+            }
+        }
+
+        loadLatestSession()
+    }, [])
 
     const uploadingFile = async () =>{
         setUploadStatus(UploadStatusConstants.inprogress)
@@ -28,12 +52,13 @@ const Home =(props) =>{
             const formData = new FormData();
             const session_id = uuidv4()
             console.log(session_id)
-            formData.append("pdf",file)
+            formData.append("file",file)
             formData.append("session_id",session_id)
             const response = await fetch(
-                `http://localhost:8000/process/${topic}`,
+                buildApiUrl(`/process/${topic}`),
                 {
                     method: "POST",
+                    credentials: "include",
                     body: formData,
                 }
             )
@@ -73,7 +98,7 @@ const Home =(props) =>{
     const loadingView = () =>(
             <LoadingContainer>
                 <Watch  color="rgba(0, 192, 251, 0.28)" height="60" width="60" />
-                <LoadingText>Processing PDF...</LoadingText>
+                <LoadingText>Processing file...</LoadingText>
             </LoadingContainer>
     )
 
@@ -90,7 +115,7 @@ const Home =(props) =>{
             <Labels htmlFor="topic">Enter the topic</Labels>
             <InputEle id="topic" type="text" onChange={topicChange} value={topic}/>
             <UploadWrapper>
-            <CustomLabel htmlFor="File">DOC</CustomLabel>
+            <CustomLabel htmlFor="File">FILE</CustomLabel>
             <HiddenInput 
                 id="File" 
                 type="file" 
@@ -102,7 +127,14 @@ const Home =(props) =>{
             </FileDisplayBox>
             </UploadWrapper>
 
-            <SubmitButton type="submit" disabled={!file}>Submit</SubmitButton>
+            <ActionRow>
+                <SubmitButton type="submit" disabled={!file}>Submit</SubmitButton>
+                {latestSession && (
+                    <SubmitButton type="button" onClick={() => navigate('/chat', { state: { session_id: latestSession.session_id, title: latestSession.topic } })}>
+                        Continue
+                    </SubmitButton>
+                )}
+            </ActionRow>
         </FormElement>
     )
 

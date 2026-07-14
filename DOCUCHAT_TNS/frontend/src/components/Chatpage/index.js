@@ -7,6 +7,8 @@ import {MagnifyingGlass} from 'react-loader-spinner'
 import {ChatContainer,ChatHeadSection, MessagesSubContainer, TopicHeading, HeadContainer, InputTab,InputBox,MessagesContainer,ErrText,EnterButn, BackButton,LoadingContainer,RetrySection,RetryButton,TokenInfoSEC} from "./styledComponents"
 import Message from "../Message"
 import SideNavBar from "../SideNavbar"
+import { mapSessionMessagesToViewMessages } from "./messageUtils"
+import { buildApiUrl } from "../../api"
 
 
 const MessageStatusConstants = {
@@ -23,22 +25,93 @@ const Chatpage = () =>{
     const [userInput,setUserInput] = useState("")
     const [msgStatus,setMsgStatus] = useState(MessageStatusConstants.success)
     const messagesEndRef = useRef(null)
-    const [responseMsgs,setResponseMsgs] = useState([])
+    const [messages,setMessages] = useState([])
+    const [sidebarSessions,setSidebarSessions] = useState([])
+    const [activeSessionId,setActiveSessionId] = useState(state?.session_id || "")
+    const [activeTopic,setActiveTopic] = useState(state?.title || "")
+    const [username,setUsername] = useState("User")
 
     useEffect(()=>{
-        console.log("Effect 1 ran");
-        setResponseMsgs(prev =>[
-            ...prev,
-            {
-            id: Date.now(),
-            message: state.query_response,
-            sender: "bot"
-            }])
-        },[])  
+        const initialMessage = state?.query_response
+        if (initialMessage) {
+            setMessages([{ id: `initial-${Date.now()}`, message: initialMessage, sender: "bot" }])
+        }
+    }, [state?.query_response])
+
+    useEffect(() => {
+        const loadProfile = async () => {
+            try {
+                const response = await fetch(buildApiUrl("/auth/me"), {
+                    credentials: "include"
+                })
+                if (!response.ok) {
+                    return
+                }
+                const data = await response.json()
+                if (data?.user?.username) {
+                    setUsername(data.user.username)
+                }
+            } catch (error) {
+                console.log("Unable to load profile", error)
+            }
+        }
+
+        const loadSidebarSessions = async () => {
+            try {
+                const response = await fetch(buildApiUrl("/auth/sessions"), {
+                    credentials: "include"
+                })
+
+                if (!response.ok) {
+                    return
+                }
+
+                const data = await response.json()
+                if (data?.sessions) {
+                    setSidebarSessions(data.sessions)
+                }
+            } catch (error) {
+                console.log("Error loading sidebar sessions:", error)
+            }
+        }
+
+        loadProfile()
+        loadSidebarSessions()
+    }, [])
+
+    useEffect(() => {
+        if (!activeSessionId) {
+            return
+        }
+
+        const loadSessionHistory = async () => {
+            try {
+                const response = await fetch(buildApiUrl(`/auth/session/${activeSessionId}`), {
+                    credentials: "include"
+                })
+
+                if (!response.ok) {
+                    return
+                }
+
+                const data = await response.json()
+                if (data?.success && data.session?.messages) {
+                    setMessages(mapSessionMessagesToViewMessages(data.session.messages, activeSessionId))
+                    if (data.session.topic) {
+                        setActiveTopic(data.session.topic)
+                    }
+                }
+            } catch (error) {
+                console.log("Error loading session history:", error)
+            }
+        }
+
+        loadSessionHistory()
+    }, [activeSessionId])
     
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block:"center" })
-    }, [responseMsgs])
+    }, [messages])
     
     const inputChange =(event)=>{
         setUserInput(event.target.value)
@@ -51,17 +124,19 @@ const Chatpage = () =>{
         try{
             console.log("sent request to Backend")
             const response = await fetch(
-                "http://localhost:8000/response",
+                buildApiUrl("/response"),
                 {
                     method: "POST",
                     headers:{
                         "Content-type": "application/json"
                     },
+                    credentials: "include",
                     body: JSON.stringify({
                         query: query,
-                        status: "False",
-                        session_id: state.session_id,
-                        topic_name: state.title
+                        status: false,
+                        user_id: "1" ,
+                        session_id: activeSessionId || state?.session_id,
+                        topic_name: activeTopic || state?.title
                     })
                 }
             )
@@ -78,7 +153,7 @@ const Chatpage = () =>{
                 setMsgStatus(MessageStatusConstants.Exceeded)
                 return
             }
-            setResponseMsgs(prev =>[
+            setMessages(prev =>[
                 ...prev,
                 {
                 id: Date.now(),
@@ -98,7 +173,7 @@ const Chatpage = () =>{
     const onEnterInput = (event)=>{
         event.preventDefault()
         getResponseFromLLM(userInput,false)
-        setResponseMsgs(prev =>[
+        setMessages(prev =>[
             ...prev,
             {
             id: Date.now(),
@@ -112,13 +187,70 @@ const Chatpage = () =>{
     
 
     const onRetry = ()=>{
-        let userQuery = responseMsgs.at(-1).message
+        let userQuery = messages.at(-1)?.message
         console.log(userQuery)
         getResponseFromLLM(userQuery, true)    
     }
 
     const onBackInput = ()=>{
         navigateBack("/")
+    }
+
+    const handleSelectSession = (sessionId, topic) => {
+        setActiveSessionId(sessionId)
+        setActiveTopic(topic)
+        setMessages([])
+    }
+
+    const handleDeleteSession = (sessionId) => {
+        setSidebarSessions((prevSessions) => {
+            const updated = prevSessions.filter((session) => session.session_id !== sessionId)
+            return updated
+        })
+
+        setActiveSessionId((currentActive) => {
+            if (currentActive !== sessionId) return currentActive
+            const nextSession = sidebarSessions.find((session) => session.session_id !== sessionId)
+            if (nextSession) {
+                setActiveTopic(nextSession.topic)
+                setMessages([])
+                return nextSession.session_id
+            }
+            setActiveTopic('')
+            setMessages([])
+            return ''
+        })
+    }
+
+    const handlePinSession = (sessionId) => {
+        setSidebarSessions((prevSessions) => {
+            const sessionToPin = prevSessions.find((session) => session.session_id === sessionId)
+            if (!sessionToPin) return prevSessions
+
+            const remaining = prevSessions.filter((session) => session.session_id !== sessionId)
+            const pinnedIndex = remaining.findIndex((session) => session.pinned)
+            const pinnedSessions = remaining.filter((session) => session.pinned)
+            const unpinnedSessions = remaining.filter((session) => !session.pinned)
+
+            return [
+                { ...sessionToPin, pinned: true },
+                ...pinnedSessions,
+                ...unpinnedSessions
+            ]
+        })
+    }
+
+    const handleLogout = async () => {
+        try {
+            await fetch(buildApiUrl("/auth/logout"), {
+                method: "POST",
+                credentials: "include"
+            })
+        } catch (error) {
+            console.log("Logout failed", error)
+        } finally {
+            navigateBack('/login')
+        }
     }
 
     const getStatusSec = () =>{
@@ -133,7 +265,7 @@ const Chatpage = () =>{
                 return(
                     <RetrySection > 
                         <FaRedo onClick={onRetry} size={24}/>
-                        <ErrText>something went wrong....</ErrText>
+                        <ErrText>   something went wrong....</ErrText>
                     </RetrySection>
                 )
             case MessageStatusConstants.Exceeded:
@@ -156,18 +288,26 @@ const Chatpage = () =>{
 
     return(
         <ChatContainer>
-            <SideNavBar />
+            <SideNavBar
+                sessions={sidebarSessions}
+                activeSessionId={activeSessionId}
+                onSelectSession={handleSelectSession}
+                onDeleteSession={handleDeleteSession}
+                onPinSession={handlePinSession}
+                username={username}
+                onLogout={handleLogout}
+            />
             <MessagesSubContainer>
                 <ChatHeadSection>
                     <BackButton onClick={onBackInput}>
                         <IoArrowBackCircle size={"32px"}/>
                     </BackButton>
                     <HeadContainer>
-                        <TopicHeading>{state.title}</TopicHeading>
+                        <TopicHeading>{activeTopic}</TopicHeading>
                     </HeadContainer>
                 </ChatHeadSection>
                 <MessagesContainer>
-                    {responseMsgs.map(each => (
+                    {messages.map(each => (
                         <Message key={each.id} msgcontent={each.message} msgsource={each.sender}/>
                     ))}
                     {getStatusSec()}

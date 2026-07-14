@@ -11,10 +11,14 @@ from Rag.rag_service import Rag_core
 
 from auth.auth_router import router as auth_router
 
+from fastapi import Depends
+
+from auth.dependencies import get_current_user
+
 
 class ResponseRequest(BaseModel):
     query: str
-    status:str
+    status:bool
     session_id: str
     topic_name: str
 
@@ -22,13 +26,19 @@ class ResponseRequest(BaseModel):
 app = FastAPI()
 app.include_router(auth_router)
 
-origins=[
+origins = [
     "http://localhost:3000",
-    "https://docu-chat-tns.vercel.app"
+    "http://localhost:3001",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:3001",
+    "http://192.168.1.5:3000",
+    "http://192.168.1.5:3001",
+    "https://docu-chat-tns.vercel.app",
 ]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
+    allow_origin_regex=r"https?://(localhost|127\.0\.0\.1|192\.168\.\d+\.\d+)(:\d+)?$",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -43,22 +53,23 @@ def home():
 
 
 @app.post("/process/{topic}")
-async def process_pdf(
+async def process_file(
     topic: str,
-    pdf: UploadFile = File(...),
-    session_id: str = Form(...)
+    file: UploadFile = File(...),
+    session_id: str = Form(...),
+    current_user=Depends(get_current_user)
 ):
     pdf_path = None
-    print("Processing PDF")
+    print("Processing file")
     try:
         # global PDF_PATH_FOR_RAG
 
-        # Read uploaded PDF
-        contents = await pdf.read()
+        # Read uploaded file
+        contents = await file.read()
 
         cloudinary_result = upload_pdf(
             file_bytes=contents,
-            filename=pdf.filename,
+            filename=file.filename,
             topic=topic
         )
 
@@ -78,7 +89,7 @@ async def process_pdf(
 
         # print(topic)
         # print(session_id)
-        print(f"📄 Processing PDF: {pdf_path}")
+        print(f"📄 Processing file: {pdf_path}")
 
         query_data = {
             "session_id": session_id,
@@ -87,6 +98,9 @@ async def process_pdf(
             "pdf_path": pdf_path,
             "cloudinary_url": cloudinary_result["secure_url"],
             "topic_name": topic,
+
+            "user_id": current_user["user_id"],
+            "username": current_user["username"]
         }
         
         # print(f"Temporary PDF Path: {pdf_path}")
@@ -124,14 +138,16 @@ async def process_pdf(
  
   
 @app.post("/response")  
-def query_response(data: ResponseRequest):
+def query_response(data: ResponseRequest, current_user=Depends(get_current_user)):
     print("Responding query")
     try:
         query_data ={
         "query": data.query,
         "status": data.status,
         "session_id": data.session_id,
-        "topic_name": data.topic_name
+        "topic_name": data.topic_name,
+        "user_id": current_user["user_id"],
+        "username": current_user["username"]
         }
         # print(data.session_id)
         query_response = Rag_core(query_data)

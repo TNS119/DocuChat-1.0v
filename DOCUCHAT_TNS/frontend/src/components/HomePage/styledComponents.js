@@ -59,9 +59,9 @@ export const SubmitButton = styled.button`
     background-color: transparent;
     color: rgb(16, 189, 242);
     border: 1px solid rgb(16, 189, 242);
-    padding: 4px;
+    padding: 8px 12px;
     margin-top: 8px;
-    border-radius: 4px;
+    border-radius: 20px;
     width: 30%;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -76,6 +76,13 @@ export const SubmitButton = styled.button`
         cursor: not-allowed;
         opacity: 0.6;
     }
+`
+
+export const ActionRow = styled.div`
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
 `
 
 export const RetryTxt = styled.p`

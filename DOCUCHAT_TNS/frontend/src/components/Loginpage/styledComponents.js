@@ -1,15 +1,96 @@
-import styled from 'styled-components'
+import styled from 'styled-components';
 
-export const OuterContainer  = styled.div`
-  height: 100vh;
+export const OuterContainer = styled.div`
+  min-height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: center;'
-  background-image: url('https://res.cloudinary.com/dvl7x5tsh/image/upload/v1783852428/aa2ca05c-5134-4c4b-90bf-e55a6b00129d.png');
+  align-items: center;
+  padding: 24px;
+  background-image: url('https://res.cloudinary.com/da00pyggy/image/upload/v1780422843/opoy7_obpl9c.jpg');
   background-size: cover;
-`
+  background-position: center;
+`;
 
 export const InnerContainer = styled.form`
-    width: 60%;
-    
-`
+  width: 100%;
+  max-width: 420px;
+`;
+
+export const Card = styled.div`
+  padding: 32px;
+  border: 1px dashed rgb(16, 189, 242);
+  border-radius: 40px;
+  background: rgba(2, 12, 25, 0.62);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.25);
+`;
+
+export const Heading = styled.h1`
+  margin: 0 0 8px;
+  color: rgb(16, 189, 242);
+  font-family: roboto;
+  font-size: 28px;
+`;
+
+export const SubHeading = styled.p`
+  margin: 0 0 20px;
+  color: #dbeafe;
+  font-size: 15px;
+`;
+
+export const Field = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+`;
+
+export const Label = styled.label`
+  color: #e0f2fe;
+  font-size: 14px;
+`;
+
+export const Input = styled.input`
+  width: 100%;
+  background-color: rgba(16, 189, 242, 0.14) !important;
+  border: 1px solid rgb(16, 189, 242);
+  border-radius: 20px;
+  color: #ffffff;
+  padding: 10px 12px;
+  outline: none;
+`;
+
+export const Button = styled.button`
+  width: 100%;
+  background-color: transparent;
+  color: rgb(16, 189, 242);
+  border: 1px solid rgb(16, 189, 242);
+  padding: 10px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: all 0.3s ease;
+
+  &:hover:not(:disabled) {
+    background-color: rgba(16, 189, 242, 0.2);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: wait;
+  }
+`;
+
+export const ErrorText = styled.p`
+  color: #fecaca;
+  margin: 0 0 10px;
+  font-size: 14px;
+  min-height: 20px;
+`;
+
+export const LinkText = styled.p`
+  margin-top: 14px;
+  color: #bae6fd;
+  font-size: 14px;
+  text-align: center;
+`;

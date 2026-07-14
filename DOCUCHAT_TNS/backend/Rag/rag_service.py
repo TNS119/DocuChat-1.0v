@@ -33,31 +33,53 @@ HF_TOKEN = os.getenv("HF_TOKEN")
 print(f"Debug: GROQ_API_KEY loaded: {'Yes' if GROQ_API_KEY else 'No'}")
 print(f"Debug: HF_TOKEN loaded: {'Yes' if HF_TOKEN else 'No'}")
 
+def get_vector_store(
+    topic_name,
+    user_id,
+    session_id,
+    embeddings
+):
 
-def get_vector_store(topic_name,session_id, embeddings):
-    # Sanitize topic name for folder path
-    safe_topic_name = topic_name.strip().lower()
-    safe_topic_name = re.sub(r'[^a-z0-9\s]', '', safe_topic_name) 
-    safe_topic_name = re.sub(r'\s+', '_', safe_topic_name)  
+
+    """Return Chroma vector store for a given session.
+    """
+
+    # Sanitize topic name for folder/collection path
+    safe_topic_name = (topic_name or "default").strip().lower()
+    safe_topic_name = re.sub(r"[^a-z0-9\s]", "", safe_topic_name)
+    safe_topic_name = re.sub(r"\s+", "_", safe_topic_name)
+
+    # Anchor to backend/ so relative paths don't break based on CWD
+    backend_dir = os.path.dirname(__file__)  # backend/Rag
+    project_backend_root = os.path.abspath(os.path.join(backend_dir, ".."))  # backend/
+
+
+    db_path = os.path.join(
+        project_backend_root,
+        "chroma_langchain_db",
+        str(user_id),
+        str(session_id)
+    )
+
+    db_exists = os.path.exists(db_path)
+
+    if not db_exists:
+        os.makedirs(db_path)
     
-    db_path = f"./chroma_langchain_db/{session_id}/{safe_topic_name}"
-    
-    # Check if database already exists on disk
-    if os.path.exists(db_path):
-        print(f"✓ LOADING EXISTING database which is {safe_topic_name} from disk: {db_path}")
+
+    if db_exists:
+        print(f"✓ LOADING EXISTING database from disk: {db_path}")
     else:
-        print(f"✓ CREATING NEW database as {safe_topic_name} at: {db_path}")
-    
+        print(f"✓ CREATING NEW database at: {db_path}")
+
     vector_store = Chroma(
         collection_name=safe_topic_name,
         embedding_function=embeddings,
-        persist_directory=db_path,  
+        persist_directory=db_path,
     )
-    
-    # Show current collection stats
-    count = vector_store._collection.count() if hasattr(vector_store, '_collection') else "unknown"
-    print(f"  Current documents in collection: {count}")
-    
+
+    count = vector_store._collection.count() if hasattr(vector_store, "_collection") else "unknown"
+    print(f"  Current documents in collection '{safe_topic_name}': {count}")
     return vector_store
 
 def clean_response(text):
@@ -86,11 +108,21 @@ def Rag_core(given_data):
         topic_name = given_data.get("topic_name")      
         print(f"got topic_name: {topic_name}")
 
-        if not session_exists(session_id):
+        user_id = given_data.get("user_id")
+        print(f"got user_id: {user_id}")
+
+        username = given_data.get("username")
+        print(f"got username: {username}")
+
+        if not session_exists(session_id, user_id):
             print("Creating Mongodb Session id")
+            # Avoid Mongo DuplicateKeyError by ensuring we only insert
+            # when the session does not already exist.
             create_session(
                 session_id,
-                topic_name
+                topic_name,
+                user_id,
+                username
             )
 
         history = get_chat_history(session_id)
@@ -103,7 +135,16 @@ def Rag_core(given_data):
         print(f"Processing topic: {topic_name}")
         
         # Load/create persistent vector store for this topic
-        vector_store = get_vector_store(topic_name, session_id, embeddings)
+        vector_store = get_vector_store(
+            topic_name,
+            user_id,
+            session_id,
+            embeddings
+        )
+        
+
+
+
             
     except Exception as e:
         print(f"Error initializing vector store: {str(e)}")
