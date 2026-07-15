@@ -17,9 +17,12 @@ export const SideBarContainer = styled.div`
 export const Heading = styled.h1`
     font-family: roboto;
     color: rgb(16, 189, 242);
-    margin: 0 0 10px;
+    margin: 0 0 18px;
+    padding: 0 0 12px;
     font-size: 24px;
     text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+    cursor: pointer;
 `
 
 export const NewChatButton = styled.button`
@@ -48,15 +51,15 @@ export const SessionList = styled.div`
 export const SessionItemWrapper = styled.div`
   position: relative;
   display: flex;
-  align-items: center;
-  gap: 8px;
+  align-items: center !important;
+  gap: px;
   padding-right: 8px;
 `
 
 export const SessionMain = styled.button`
   flex: 1;
   border: 0;
-  border-radius: 8px;
+  border-radius: ${({$visible}) => ($visible ? '8px 0px 0px 8px': '8px')};
   padding: 10px 12px;
   text-align: left;
   display:flex;
@@ -64,6 +67,9 @@ export const SessionMain = styled.button`
   cursor: pointer;
   color: #ffffff;
   background: ${({ $active }) => ($active ? 'rgba(0, 192, 251, 0.3)' : 'rgba(255,255,255,0.08)')};
+  ${SessionItemWrapper}:hover &{
+    border-radius: 8px 0px 0px 8px;
+  }
 `
 
 export const SessionText = styled.span`
@@ -73,36 +79,38 @@ export const SessionText = styled.span`
 
 export const SessionActionsButton = styled.a`
   border: 0;
-  background: transparent;
+  background: ${({ $active }) => ($active ? 'rgba(0, 192, 251, 0.3)' : 'rgba(255,255,255,0.08)')};  
   color: rgba(255,255,255,0.7);
   cursor: pointer;
-  font-size: 18px;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
+  font-size: 28px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 0;
+  opacity: ${({$visible}) => ($visible ? '4': '0')};
   transition: opacity 0.2s ease;
+  border-radius: 0 180% 180% 0;
+  padding: 18px 18px 19px 18px;
+  margin-right: 6px;
 
-  ${SessionItemWrapper}:hover & {
-    opacity: 1;
-    background: rgba(255,255,255,0.08);
+  ${SessionItemWrapper}:hover &{
+    opacity: 4;
+    background: ${({ $active }) => ($active ? 'rgba(0, 192, 251, 0.3)' : 'rgba(255,255,255,0.08)')};    
   }
 `
 
 export const SessionActionMenu = styled.div`
-  position: absolute;
-  top: 100%;
+  position: relative;
+  top: 0;
   right: 0;
   background-image: linear-gradient(to right, #1cbdd60a,#36dbf414);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 12px;
-  padding: 8px 0;
+  padding: 2px 0;
   margin-top: 8px;
-  min-width: 100px;
-  z-index: 70;
+  min-width: 80px;
+  z-index: 9999;
 `
 
 export const SessionActionItem = styled.button`
@@ -143,6 +151,14 @@ export const ProfileContinaer = styled.div`
 `
 export const Footer = styled.div`
   border-top: 1px solid rgba(255,255,255,0.15);
+  padding-top: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`
+export const SubFooter = styled.div`
+  border-top: 1px solid rgba(255,255,255,0.15);
+  width: 100%;
   padding-top: 16px;
   display: flex;
   flex-direction: row;

@@ -20,7 +20,7 @@ const MessageStatusConstants = {
 
 
 const Chatpage = () =>{
-    const navigateBack = useNavigate()
+    const routeNavigation = useNavigate()
     const {state} = useLocation()
     const [userInput,setUserInput] = useState("")
     const [msgStatus,setMsgStatus] = useState(MessageStatusConstants.success)
@@ -91,7 +91,7 @@ const Chatpage = () =>{
                 })
 
                 if (!response.ok) {
-                    return
+                    return 
                 }
 
                 const data = await response.json()
@@ -193,52 +193,41 @@ const Chatpage = () =>{
     }
 
     const onBackInput = ()=>{
-        navigateBack("/")
+        routeNavigation("/")
     }
 
     const handleSelectSession = (sessionId, topic) => {
         setActiveSessionId(sessionId)
         setActiveTopic(topic)
-        setMessages([])
     }
 
-    const handleDeleteSession = (sessionId) => {
+    const handleDeleteSession =  async (sessionId) => {
         setSidebarSessions((prevSessions) => {
             const updated = prevSessions.filter((session) => session.session_id !== sessionId)
             return updated
         })
+
+        await fetch(
+                buildApiUrl(`/auth/session/${sessionId}`),
+                {
+                    method: "DELETE",
+                    credentials: "include"
+                }
+            );
 
         setActiveSessionId((currentActive) => {
             if (currentActive !== sessionId) return currentActive
             const nextSession = sidebarSessions.find((session) => session.session_id !== sessionId)
             if (nextSession) {
                 setActiveTopic(nextSession.topic)
-                setMessages([])
                 return nextSession.session_id
+            }else{
+                routeNavigation("/")
             }
-            setActiveTopic('')
-            setMessages([])
-            return ''
         })
+
     }
 
-    const handlePinSession = (sessionId) => {
-        setSidebarSessions((prevSessions) => {
-            const sessionToPin = prevSessions.find((session) => session.session_id === sessionId)
-            if (!sessionToPin) return prevSessions
-
-            const remaining = prevSessions.filter((session) => session.session_id !== sessionId)
-            // const pinnedIndex = remaining.findIndex((session) => session.pinned)
-            const pinnedSessions = remaining.filter((session) => session.pinned)
-            const unpinnedSessions = remaining.filter((session) => !session.pinned)
-
-            return [
-                { ...sessionToPin, pinned: true },
-                ...pinnedSessions,
-                ...unpinnedSessions
-            ]
-        })
-    }
 
     const handleLogout = async () => {
         try {
@@ -249,7 +238,7 @@ const Chatpage = () =>{
         } catch (error) {
             console.log("Logout failed", error)
         } finally {
-            navigateBack('/login')
+            routeNavigation('/login')
         }
     }
 
@@ -293,7 +282,6 @@ const Chatpage = () =>{
                 activeSessionId={activeSessionId}
                 onSelectSession={handleSelectSession}
                 onDeleteSession={handleDeleteSession}
-                onPinSession={handlePinSession}
                 username={username}
                 onLogout={handleLogout}
             />

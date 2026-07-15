@@ -56,6 +56,17 @@ def session_exists(
         }
     ) is not None
 
+def delete_session(session_id, user_id):
+
+    result = chat_collection.delete_one(
+        {
+            "_id": session_id,
+            "user_id": user_id
+        }
+    )
+
+    return result.deleted_count == 1
+
 def save_chat_turn(session_id, user_query, assistant_response):
     # print("✌️ Saved RESPONSE and QUERY")
     result = chat_collection.update_one(

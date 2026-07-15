@@ -15,7 +15,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document
 # from langchain_huggingface import HuggingFaceEmbeddings
 # from langchain_huggingface import HuggingFaceEndpointEmbeddings
-from langchain_chroma import Chroma
+
 from Rag.embeddings import HFEmbedding
 from services.mongodb import (
     create_session,
@@ -25,6 +25,9 @@ from services.mongodb import (
 )
 # from DOCUCHAT_TNS.modal_service.docling_service.documents_reader import read_Document
 from services.modal_service import extract_documents
+from services.vector_db_service import get_vector_store
+
+
 
 #Saved upto here 143
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
@@ -33,54 +36,6 @@ HF_TOKEN = os.getenv("HF_TOKEN")
 print(f"Debug: GROQ_API_KEY loaded: {'Yes' if GROQ_API_KEY else 'No'}")
 print(f"Debug: HF_TOKEN loaded: {'Yes' if HF_TOKEN else 'No'}")
 
-def get_vector_store(
-    topic_name,
-    user_id,
-    session_id,
-    embeddings
-):
-
-
-    """Return Chroma vector store for a given session.
-    """
-
-    # Sanitize topic name for folder/collection path
-    safe_topic_name = (topic_name or "default").strip().lower()
-    safe_topic_name = re.sub(r"[^a-z0-9\s]", "", safe_topic_name)
-    safe_topic_name = re.sub(r"\s+", "_", safe_topic_name)
-
-    # Anchor to backend/ so relative paths don't break based on CWD
-    backend_dir = os.path.dirname(__file__)  # backend/Rag
-    project_backend_root = os.path.abspath(os.path.join(backend_dir, ".."))  # backend/
-
-
-    db_path = os.path.join(
-        project_backend_root,
-        "chroma_langchain_db",
-        str(user_id),
-        str(session_id)
-    )
-
-    db_exists = os.path.exists(db_path)
-
-    if not db_exists:
-        os.makedirs(db_path)
-    
-
-    if db_exists:
-        print(f"✓ LOADING EXISTING database from disk: {db_path}")
-    else:
-        print(f"✓ CREATING NEW database at: {db_path}")
-
-    vector_store = Chroma(
-        collection_name=safe_topic_name,
-        embedding_function=embeddings,
-        persist_directory=db_path,
-    )
-
-    count = vector_store._collection.count() if hasattr(vector_store, "_collection") else "unknown"
-    print(f"  Current documents in collection '{safe_topic_name}': {count}")
-    return vector_store
 
 def clean_response(text):
     cleaned = re.sub(r'<think>.*?</think>', '', text, flags=re.DOTALL)
@@ -164,10 +119,10 @@ def Rag_core(given_data):
         """
         # Adjust path to work from python_services directory
         # If path doesn't exist, try with parent directory
-        print(f"\n📄 Processing PDF: {file_path}")
+        print(f"\n📄 Processing File: {file_path}")
 
         if not os.path.isfile(file_path):
-            raise FileNotFoundError(f"PDF file not found: {file_path}")
+            raise FileNotFoundError(f"File file not found: {file_path}")
             
         # loader = PyPDFLoader(file_path)
         # docs = loader.load()
@@ -294,10 +249,10 @@ def Rag_core(given_data):
 
             print(f"Got session_id:{session_id}")
             # New PDF - index it
-            print(f"Indexing PDF for topic: {topic_name}")
+            print(f"Indexing file for topic: {topic_name}")
             pdf_path = given_data["pdf_path"]
 
-            print(f"Received PDF : {pdf_path}")
+            print(f"Received file : {pdf_path}")
 
             Pdf_Indexing(given_data["pdf_path"], vector_store)
             result = Quering(given_data["query"], vector_store)

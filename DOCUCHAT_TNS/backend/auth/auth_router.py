@@ -14,6 +14,9 @@ from services.mongodb import get_user_sessions
 
 from services.mongodb import get_session_history
 
+from services.mongodb import delete_session
+
+from services.vector_db_service import delete_vector_db
 
 router = APIRouter(
     prefix="/auth",
@@ -114,6 +117,37 @@ def load_session(
 
 
 
+
+@router.delete("/session/{session_id}")
+def delete_chat(
+    session_id: str,
+    current_user=Depends(get_current_user)
+):
+
+    deleted = delete_session(
+        session_id,
+        current_user["user_id"]
+    )
+
+    if not deleted:
+        return {
+            "success": False,
+            "message": "Session not found."
+        }
+
+    delete_vector_db(
+        current_user["user_id"],
+        session_id
+    )
+
+    return {
+        "success": True,
+        "message": "Session deleted."
+    }
+
+
+
+
 @router.post("/logout")
 def logout(response: Response):
 
@@ -129,3 +163,6 @@ def logout(response: Response):
         "success": True,
         "message": "Logged out successfully."
     }
+
+
+
