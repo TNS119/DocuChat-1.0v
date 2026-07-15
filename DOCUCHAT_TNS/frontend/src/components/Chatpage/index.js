@@ -228,7 +228,7 @@ const Chatpage = () =>{
             if (!sessionToPin) return prevSessions
 
             const remaining = prevSessions.filter((session) => session.session_id !== sessionId)
-            const pinnedIndex = remaining.findIndex((session) => session.pinned)
+            // const pinnedIndex = remaining.findIndex((session) => session.pinned)
             const pinnedSessions = remaining.filter((session) => session.pinned)
             const unpinnedSessions = remaining.filter((session) => !session.pinned)
 

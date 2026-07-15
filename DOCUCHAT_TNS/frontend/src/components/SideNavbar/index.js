@@ -33,7 +33,7 @@ const SideNavBar = ({ sessions = [], activeSessionId, onSelectSession, onDeleteS
                         sessions.map((session) => (
                             <SessionItemWrapper key={session.session_id}>
                                 <SessionMain
-                                    active={activeSessionId === session.session_id}
+                                    $active={activeSessionId === session.session_id}
                                     onClick={() => onSelectSession(session.session_id, session.topic)}
                                 >
                                     <SessionText>

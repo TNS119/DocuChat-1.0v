@@ -63,7 +63,7 @@ export const SessionMain = styled.button`
   justify-content: space-between;
   cursor: pointer;
   color: #ffffff;
-  background: ${({ active }) => (active ? 'rgba(0, 192, 251, 0.3)' : 'rgba(255,255,255,0.08)')};
+  background: ${({ $active }) => ($active ? 'rgba(0, 192, 251, 0.3)' : 'rgba(255,255,255,0.08)')};
 `
 
 export const SessionText = styled.span`
