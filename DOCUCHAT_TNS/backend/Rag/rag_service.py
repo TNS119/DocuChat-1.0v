@@ -51,6 +51,7 @@ def Rag_core(given_data):
         #     model_name="sentence-transformers/all-MiniLM-L6-v2"
         # )
         # type-3(working)
+        
         embeddings = HFEmbedding(HF_TOKEN)
 
 

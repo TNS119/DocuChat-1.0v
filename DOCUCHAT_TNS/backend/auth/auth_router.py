@@ -19,14 +19,10 @@ from services.mongodb import delete_session
 
 from services.vector_db_service import delete_vector_db
 
-# BUG 1 FIX: Read environment mode from .env
-# Set IS_PRODUCTION=true in your production .env file
-# Leave it unset or false for local development
 IS_PRODUCTION = os.getenv("IS_PRODUCTION", "false").lower() == "true"
 
 # Cookie security settings differ between dev and prod:
 # - Production (HTTPS, cross-origin): secure=True, samesite="None"
-# - Development (HTTP, same-host):    secure=False, samesite="Lax"
 COOKIE_SECURE = IS_PRODUCTION
 COOKIE_SAMESITE = "None" if IS_PRODUCTION else "Lax"
 
@@ -63,7 +59,7 @@ def login(
         key="access_token",
         value=result["token"],
         httponly=True,
-        secure=COOKIE_SECURE,      # BUG 1 FIX: True in prod (HTTPS), False in dev
+        secure=COOKIE_SECURE,      
         samesite=COOKIE_SAMESITE,  
         path="/",
         max_age=60 * 60 * 24
@@ -166,8 +162,8 @@ def logout(response: Response):
     response.delete_cookie(
         key="access_token",
         httponly=True,
-        secure=COOKIE_SECURE,      # BUG 5 FIX: Must match set_cookie exactly
-        samesite=COOKIE_SAMESITE,  # BUG 5 FIX: Must match set_cookie exactly
+        secure=COOKIE_SECURE,      
+        samesite=COOKIE_SAMESITE,  
         path="/"
     )
 

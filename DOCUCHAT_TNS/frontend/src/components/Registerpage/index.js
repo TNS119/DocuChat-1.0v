@@ -29,6 +29,11 @@ const RegisterPage = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handlePasswordChange = (event) => {
+    const {value } = event.target;
+    setFormData((prev) => ({ ...prev, password: value }));
+  };
+
   const handlePassword = () =>{
         if (passwordType === "password" ){
             setPasswordType("text")
@@ -91,7 +96,7 @@ const RegisterPage = () => {
               id="password"
               type = {passwordType}
               value={formData.password}
-              onChange={handleChange}
+              onChange={handlePasswordChange}
               placeholder="Choose a password"
               required
           />

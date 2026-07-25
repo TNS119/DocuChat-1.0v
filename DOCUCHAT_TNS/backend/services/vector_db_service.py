@@ -30,7 +30,7 @@ def get_vector_store(
     )
 
     db_exists = os.path.exists(db_path)
-
+    print(db_path)
     if not db_exists:
         os.makedirs(db_path)
     

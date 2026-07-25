@@ -7,7 +7,7 @@ def get_current_user(
     request: Request,
     access_token: str = Cookie(default=None)
 ):
-
+   
     token = access_token
 
     if token is None:
@@ -16,14 +16,14 @@ def get_current_user(
             token = auth_header.split(" ", 1)[1]
 
     if token is None:
-
+        print("No cookie found")
+        auth_header = request.headers.get("authorization", "")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Please login first."
         )
 
     payload = verify_access_token(token)
-
     if payload is None:
 
         raise HTTPException(

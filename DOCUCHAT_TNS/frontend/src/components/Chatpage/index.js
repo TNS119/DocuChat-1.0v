@@ -179,7 +179,7 @@ const Chatpage = ({ authFetch }) => {
     
 
     const onRetry = ()=>{
-        let userQuery = messages.at(-1)?.message
+        let userQuery = messages.at(-2)?.message
         console.log(userQuery)
         getResponseFromLLM(userQuery, true)    
     }

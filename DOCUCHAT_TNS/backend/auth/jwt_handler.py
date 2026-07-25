@@ -34,7 +34,6 @@ def create_access_token(data: dict):
 
 
 def verify_access_token(token: str):
-
     try:
         payload = jwt.decode(
             token,
@@ -44,5 +43,6 @@ def verify_access_token(token: str):
 
         return payload
 
-    except JWTError:
+    except JWTError as e:
+        print("JWT ERROR:", e)
         return None
