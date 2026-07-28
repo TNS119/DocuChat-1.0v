@@ -1,10 +1,11 @@
 import {useState,useEffect,useRef} from "react"
 import { useLocation, useNavigate} from "react-router-dom";
 import { IoArrowBackCircle } from "react-icons/io5";
+import { CgMenuRound } from "react-icons/cg";
 import { FaRedo } from "react-icons/fa";
 import { FaCircleArrowUp } from "react-icons/fa6";
 import {MagnifyingGlass} from 'react-loader-spinner'
-import {ChatContainer,ChatHeadSection, MessagesSubContainer, TopicHeading, HeadContainer, InputTab,InputBox,MessagesContainer,ErrText,EnterButn, BackButton,LoadingContainer,RetrySection,RetryButton,TokenInfoSEC} from "./styledComponents"
+import {ChatContainer,ChatHeadSection, MessagesSubContainer, Backdrop, TopicHeading, HeadContainer, InputTab,InputBox,MessagesContainer,ErrText,EnterButn, MenuToggleButton, BackButton,LoadingContainer,RetrySection,RetryButton,TokenInfoSEC} from "./styledComponents"
 import Message from "../Message"
 import SideNavBar from "../SideNavbar"
 import { mapSessionMessagesToViewMessages } from "./messageUtils"
@@ -23,6 +24,7 @@ const Chatpage = ({ authFetch }) => {
     const routeNavigation = useNavigate()
     const {state} = useLocation()
     const [userInput,setUserInput] = useState("")
+    
     const [msgStatus,setMsgStatus] = useState(MessageStatusConstants.success)
     const messagesEndRef = useRef(null)
     const [messages,setMessages] = useState([])
@@ -30,6 +32,7 @@ const Chatpage = ({ authFetch }) => {
     const [activeSessionId,setActiveSessionId] = useState(state?.session_id || "")
     const [activeTopic,setActiveTopic] = useState(state?.title || "")
     const [username,setUsername] = useState("User")
+    const [sideNavBarStatus,setSideNavBarStatus] = useState(false)
 
     useEffect(()=>{
         const initialMessage = state?.query_response
@@ -233,6 +236,11 @@ const Chatpage = ({ authFetch }) => {
         }
     }
 
+    const handleSideNavbar = ()=>{
+        console.log("Menu toggle")
+        setSideNavBarStatus(prev => ({sideNavBarStatus: !prev.sideNavBarStatus}))
+    }
+
     const getStatusSec = () =>{
         switch(msgStatus){
             case MessageStatusConstants.inprogress:
@@ -268,6 +276,7 @@ const Chatpage = ({ authFetch }) => {
 
     return(
         <ChatContainer>
+            {sideNavBarStatus.sideNavBarStatus && <Backdrop getSidebar = {sideNavBarStatus.sideNavBarStatus} onClick={handleSideNavbar}/>   }
             <SideNavBar
                 sessions={sidebarSessions}
                 activeSessionId={activeSessionId}
@@ -275,9 +284,15 @@ const Chatpage = ({ authFetch }) => {
                 onDeleteSession={handleDeleteSession}
                 username={username}
                 onLogout={handleLogout}
+                getSidebar = {sideNavBarStatus}
+                handleSideNavbar= {handleSideNavbar}
             />
-            <MessagesSubContainer>
+            <MessagesSubContainer getSidebar = {sideNavBarStatus.sideNavBarStatus}>
                 <ChatHeadSection>
+                    <MenuToggleButton onClick={handleSideNavbar} getSidebar = {sideNavBarStatus.sideNavBarStatus}>
+                        <CgMenuRound size={"32px"}/>
+                    </MenuToggleButton>
+                    
                     <BackButton onClick={onBackInput}>
                         <IoArrowBackCircle size={"32px"}/>
                     </BackButton>

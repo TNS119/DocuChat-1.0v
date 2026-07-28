@@ -3,26 +3,69 @@ import styled from "styled-components"
 export const SideBarContainer = styled.div`
   height: 100vh;
   width: 25%;
-  min-width: 240px;
   background-image: linear-gradient(to right, #1cbdd60a,#36dbf414);
   padding: 24px;
-  display:flex;
+  display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 16px;
-  font-size: 38%;
+  gap: 0px;
   overflow-y: auto;
+
+  transition: transform 0.4s ease-in-out;
+  transform: ${props => (!props.getSidebar ? 'translateX(0)' : 'translateX(-100%)')};
+  
+
+  @media (max-width: 768px) {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 270px;
+    height: 100vh;
+    z-index: 999; 
+    box-shadow: 4px 0 12px rgba(0, 0, 0, 0.15);
+    background-image: linear-gradient(to right, #080d0e, #171b1c);
+
+    transition: transform 0.4s ease-in-out;
+    transform: ${props => (props.getSidebar ? 'translateX(0)' : 'translateX(-100%)')};
+    
+  }
+
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `
 
-export const Heading = styled.h1`
-    font-family: roboto;
-    color: rgb(16, 189, 242);
+export const HeadingContianer = styled.div`
     margin: 0 0 18px;
-    padding: 0 0 12px;
-    font-size: 24px;
     text-align: center;
     border-bottom: 1px solid rgba(255,255,255,0.15);
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width:100%;
+
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+`
+
+export const MenuToggleButton = styled.button`
+    background-color: transparent;
+    outline: none;
+    border:0px;
+    color: #ffffff;
+    cursor: pointer;
+    width: 30px;
+    margin: 12px 0px 0px;
+`
+
+export const Heading = styled.h1`
+  font-family: roboto;
+  color: rgb(16, 189, 242);
+  font-size: 26px;
 `
 
 export const NewChatButton = styled.button`
@@ -46,14 +89,30 @@ export const SessionList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
+  height: 70%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  padding-left: 12px;
+
+  &:hover {
+    scrollbar-width: thin;
+    scrollbar-color:  #656c6e  #062c30 ; 
+    direction: rtl; 
+    * {
+      direction: ltr;
+    }
+  }
 `
 
 export const SessionItemWrapper = styled.div`
   position: relative;
   display: flex;
   align-items: center !important;
-  gap: px;
   padding-right: 8px;
+  @media(max-width: 768px){
+    width: auto;
+  }
 `
 
 export const SessionMain = styled.button`
@@ -93,6 +152,7 @@ export const SessionActionsButton = styled.a`
   border-radius: 0 180% 180% 0;
   padding: 18px 18px 19px 18px;
   margin-right: 6px;
+  clip-path:  ${({$visible}) => ($visible ? 'polygon(0 0, 70% 0, 100% 50%, 70% 100%, 0 100%)': 'polygon(0 0, 70% 0, 120% 50%, 70% 100%, 0 100%)')};
 
   ${SessionItemWrapper}:hover &{
     opacity: 4;
@@ -107,16 +167,16 @@ export const SessionActionMenu = styled.div`
   background-image: linear-gradient(to right, #1cbdd60a,#36dbf414);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 12px;
-  padding: 2px 0;
   margin-top: 8px;
-  min-width: 80px;
-  z-index: 9999;
+  min-width: 30px;
+  z-index: 999;
 `
 
 export const SessionActionItem = styled.button`
   width: 100%;
   border: 0;
   background: transparent;
+  border-radius: 12px;
   color: #ffffff;
   padding: 8px 12px;
   text-align: left;

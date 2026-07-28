@@ -21,7 +21,6 @@ from services.vector_db_service import delete_vector_db
 
 IS_PRODUCTION = os.getenv("IS_PRODUCTION", "false").lower() == "true"
 
-# Cookie security settings differ between dev and prod:
 # - Production (HTTPS, cross-origin): secure=True, samesite="None"
 COOKIE_SECURE = IS_PRODUCTION
 COOKIE_SAMESITE = "None" if IS_PRODUCTION else "Lax"

@@ -17,14 +17,36 @@ export const ChatContainer= styled.div`
     }
 `
 
+export const Backdrop = styled.div`
+  display: ${props => (props.getSidebar  ? 'block' : 'none')};
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4); /* Subtle dark overlay; set to transparent if preferred */
+  z-index: 998; /* Under sidebar (999), over content */
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+
+  @media (min-width: 768px) {
+    display: none;
+  }
+
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+`
+
 export const MessagesSubContainer = styled.div`
-    width: 80%;
+    width: ${props => (!props.getSidebar ? '94%' : '10000%')} ;
     height: 100%;
     display:flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     overflow: hidden; 
+
+    transition: width 0.4s ease-in-out;
     
 `
 
@@ -118,6 +140,20 @@ export const TopicHeading = styled.h1`
     font-weight: bold;
     text-decoration: underline;
 `
+export const MenuToggleButton = styled.button`
+    background-color: transparent;
+    outline: none;
+    border:0px;
+    padding: 2px;
+    color: #ffffff;
+    cursor: pointer;
+    width: 36px;
+    margin-right: 16px;
+
+    @media (min-width: 768px){
+        display : ${props =>(props.getSidebar  ? "flex":"none")};
+    }
+`
 
 export const BackButton =styled.button`
     background-color: transparent;
@@ -126,7 +162,7 @@ export const BackButton =styled.button`
     padding: 2px;
     color: #ffffff;
     cursor: pointer;
-    width: 2%;
+    width: 30px;
 `
 export const RetrySection = styled.div`
   display:flex;

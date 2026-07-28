@@ -1,23 +1,32 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { SideBarContainer, Heading, SessionList, SessionItemWrapper, SessionMain, SessionText, SessionActionsButton, SessionActionMenu, SessionActionItem, EmptyState, Footer, SubFooter, ProfileContinaer, ProfileAvatar, ProfileName, LogoutButton, NewChatButton, SectionTitle } from './styledComponents'
+import { LuPanelLeftClose } from "react-icons/lu";
+import { SideBarContainer, HeadingContianer, MenuToggleButton, Heading, SessionList, SessionItemWrapper, SessionMain, SessionText, SessionActionsButton, SessionActionMenu, SessionActionItem, EmptyState, Footer, SubFooter, ProfileContinaer, ProfileAvatar, ProfileName, LogoutButton, NewChatButton, SectionTitle } from './styledComponents'
 
-const SideNavBar = ({ sessions = [], activeSessionId, onSelectSession, onDeleteSession, username = 'User', onLogout }) => {
+const SideNavBar = ({ sessions = [], activeSessionId, onSelectSession, onDeleteSession, username = 'User', onLogout, getSidebar, handleSideNavbar  }) => {
     const navigate = useNavigate();
     const [openSessionMenu, setOpenSessionMenu] = useState(null);
     const handleMenuToggle = (sessionId) => {
         setOpenSessionMenu((current) => (current === sessionId ? null : sessionId));
     };
-
     const handleDelete = (sessionId) => {
         setOpenSessionMenu(null);
         onDeleteSession?.(sessionId);
     };
 
+    const handleSideMenuToggle = () =>{
+        handleSideNavbar()
+    }
+
     return (
-        <SideBarContainer>
-            <div>
-                <Heading>DOCUCHART</Heading>
+        <SideBarContainer getSidebar ={getSidebar.sideNavBarStatus}>
+            
+                <HeadingContianer>
+                    <Heading>DOCUCHART</Heading> 
+                    <MenuToggleButton onClick={handleSideMenuToggle}>
+                        <LuPanelLeftClose size={"24px"}/>
+                    </MenuToggleButton>
+                </HeadingContianer>
                 
                 <SectionTitle>Recent sessions</SectionTitle>
                 <SessionList>
@@ -52,8 +61,6 @@ const SideNavBar = ({ sessions = [], activeSessionId, onSelectSession, onDeleteS
                         ))
                     )}
                 </SessionList>
-                
-            </div>
             
             
             <Footer>
