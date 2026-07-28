@@ -237,7 +237,6 @@ const Chatpage = ({ authFetch }) => {
     }
 
     const handleSideNavbar = ()=>{
-        console.log("Menu toggle")
         setSideNavBarStatus(prev => ({sideNavBarStatus: !prev.sideNavBarStatus}))
     }
 

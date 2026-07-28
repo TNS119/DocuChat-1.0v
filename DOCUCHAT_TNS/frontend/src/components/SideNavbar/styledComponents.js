@@ -12,7 +12,7 @@ export const SideBarContainer = styled.div`
   overflow-y: auto;
 
   transition: transform 0.4s ease-in-out;
-  transform: ${props => (!props.getSidebar ? 'translateX(0)' : 'translateX(-100%)')};
+  transform: ${({$getSidebar}) => (!$getSidebar ? 'translateX(0)' : 'translateX(-100%)')};
   
 
   @media (max-width: 768px) {
@@ -27,7 +27,7 @@ export const SideBarContainer = styled.div`
     background-image: linear-gradient(to right, #080d0e, #171b1c);
 
     transition: transform 0.4s ease-in-out;
-    transform: ${props => (props.getSidebar ? 'translateX(0)' : 'translateX(-100%)')};
+    transform: ${({$getSidebar}) => (!$getSidebar ? 'translateX(0)' : 'translateX(-100%)')};
     
   }
 
@@ -35,6 +35,8 @@ export const SideBarContainer = styled.div`
   &::-webkit-scrollbar {
     display: none;
   }
+
+  
 `
 
 export const HeadingContianer = styled.div`
@@ -69,14 +71,14 @@ export const Heading = styled.h1`
 `
 
 export const NewChatButton = styled.button`
-  width: 100%;
+  width: 200px;
   border: 1px solid rgb(16, 189, 242);
   border-radius: 20px;
   padding: 8px 10px;
   background: transparent;
   color: #ffffff;
   cursor: pointer;
-  margin-bottom: 12px;
+  margin: 12px;
 `
 
 export const SectionTitle = styled.p`
@@ -86,24 +88,42 @@ export const SectionTitle = styled.p`
 `
 
 export const SessionList = styled.div`
+  margin-right: -24px;
   display: flex;
   flex-direction: column;
   gap: 10px;
   height: 70%;
   overflow-y: auto;
   overflow-x: hidden;
-  scrollbar-width: none;
-  padding-left: 12px;
+  
 
-  &:hover {
-    scrollbar-width: thin;
-    scrollbar-color:  #656c6e  #062c30 ; 
-    direction: rtl; 
-    * {
-      direction: ltr;
+
+  @supports (selector(&::-webkit-scrollbar)) {
+    &::-webkit-scrollbar {
+      width: 6px; 
+    }
+
+    &::-webkit-scrollbar-button {
+      display: none !important;
+      width: 0 !important;
+      height: 0 !important;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: #36393ad5;
+      border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background-color: #062c3000;
     }
   }
-`
+    
+  @supports not (selector(&::-webkit-scrollbar)) {
+    scrollbar-width: thin;
+    scrollbar-color: #36393ad5 #062c3000;
+  }
+`;
 
 export const SessionItemWrapper = styled.div`
   position: relative;
@@ -152,7 +172,7 @@ export const SessionActionsButton = styled.a`
   border-radius: 0 180% 180% 0;
   padding: 18px 18px 19px 18px;
   margin-right: 6px;
-  clip-path:  ${({$visible}) => ($visible ? 'polygon(0 0, 70% 0, 100% 50%, 70% 100%, 0 100%)': 'polygon(0 0, 70% 0, 120% 50%, 70% 100%, 0 100%)')};
+  // clip-path:  ${({$visible}) => ($visible ? 'polygon(0 0, 70% 0, 100% 50%, 70% 100%, 0 100%)': 'polygon(0 0, 70% 0, 120% 50%, 70% 100%, 0 100%)')};
 
   ${SessionItemWrapper}:hover &{
     opacity: 4;
@@ -160,17 +180,36 @@ export const SessionActionsButton = styled.a`
   }
 `
 
-export const SessionActionMenu = styled.div`
+export const TrashIconAnchor = styled.div`
   position: relative;
-  top: 0;
-  right: 0;
-  background-image: linear-gradient(to right, #1cbdd60a,#36dbf414);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  display: inline-flex;
+  flex-shrink: 0;
+`;
+
+export const SessionActionMenu = styled.div`
+  position: absolute;
+  top: 50%;
+  right: 100%;            
+  margin-right: 6px;        
+  transform: translateY(-50%);
+
+  z-index: 10000;
+
+  width: max-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1px 4px;
+
+  background-image: linear-gradient(to right, #1cbdd60a, #36dbf414);
+  background-color: #061c20;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 12px;
-  margin-top: 8px;
-  min-width: 30px;
-  z-index: 999;
-`
+  cursor: pointer;
+  box-shadow: -4px 0px 15px rgba(0, 0, 0, 0.5);
+`;
+
+
 
 export const SessionActionItem = styled.button`
   width: 100%;
@@ -211,7 +250,6 @@ export const ProfileContinaer = styled.div`
 `
 export const Footer = styled.div`
   border-top: 1px solid rgba(255,255,255,0.15);
-  padding-top: 16px;
   display: flex;
   flex-direction: column;
   align-items: center;

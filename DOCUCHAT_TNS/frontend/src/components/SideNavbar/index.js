@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LuPanelLeftClose } from "react-icons/lu";
-import { SideBarContainer, HeadingContianer, MenuToggleButton, Heading, SessionList, SessionItemWrapper, SessionMain, SessionText, SessionActionsButton, SessionActionMenu, SessionActionItem, EmptyState, Footer, SubFooter, ProfileContinaer, ProfileAvatar, ProfileName, LogoutButton, NewChatButton, SectionTitle } from './styledComponents'
+import { SideBarContainer, HeadingContianer, MenuToggleButton, Heading, SessionList, SessionItemWrapper, SessionMain, SessionText, SessionActionsButton, SessionActionMenu, SessionActionItem, EmptyState, Footer, SubFooter, ProfileContinaer, ProfileAvatar, ProfileName, LogoutButton, TrashIconAnchor, NewChatButton, SectionTitle } from './styledComponents'
 
 const SideNavBar = ({ sessions = [], activeSessionId, onSelectSession, onDeleteSession, username = 'User', onLogout, getSidebar, handleSideNavbar  }) => {
     const navigate = useNavigate();
@@ -19,7 +19,7 @@ const SideNavBar = ({ sessions = [], activeSessionId, onSelectSession, onDeleteS
     }
 
     return (
-        <SideBarContainer getSidebar ={getSidebar.sideNavBarStatus}>
+        <SideBarContainer $getSidebar ={getSidebar.sideNavBarStatus}>
             
                 <HeadingContianer>
                     <Heading>DOCUCHART</Heading> 
@@ -45,18 +45,20 @@ const SideNavBar = ({ sessions = [], activeSessionId, onSelectSession, onDeleteS
                                     </SessionText>
                                     
                                 </SessionMain>
-                                <SessionActionsButton 
-                                    onClick={() => handleMenuToggle(session.session_id)} 
-                                    $active={activeSessionId === session.session_id}
-                                    $visible = {openSessionMenu === session.session_id }
-                                >
-                                        🗑 
-                                </SessionActionsButton>
-                                {openSessionMenu === session.session_id && (
-                                    <SessionActionMenu>
-                                        <SessionActionItem onClick={() => handleDelete(session.session_id)}>Delete</SessionActionItem>
-                                    </SessionActionMenu>
-                                )}
+                                <TrashIconAnchor>
+                                    <SessionActionsButton 
+                                        onClick={() => handleMenuToggle(session.session_id)} 
+                                        $active={activeSessionId === session.session_id}
+                                        $visible = {openSessionMenu === session.session_id }
+                                    >
+                                            🗑 
+                                    </SessionActionsButton>
+                                    {openSessionMenu === session.session_id && (
+                                        <SessionActionMenu>
+                                            <SessionActionItem onClick={() => handleDelete(session.session_id)}>Delete</SessionActionItem>
+                                        </SessionActionMenu>
+                                    )}
+                                </TrashIconAnchor>
                             </SessionItemWrapper>
                         ))
                     )}
