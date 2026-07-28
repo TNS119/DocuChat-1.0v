@@ -12,7 +12,7 @@ export const SideBarContainer = styled.div`
   overflow-y: auto;
 
   transition: transform 0.4s ease-in-out;
-  transform: ${({$getSidebar}) => (!$getSidebar ? 'translateX(0)' : 'translateX(-100%)')};
+  transform: ${props => (!props.getSidebar ? 'translateX(0)' : 'translateX(-100%)')};
   
 
   @media (max-width: 768px) {
@@ -27,7 +27,7 @@ export const SideBarContainer = styled.div`
     background-image: linear-gradient(to right, #080d0e, #171b1c);
 
     transition: transform 0.4s ease-in-out;
-    transform: ${({$getSidebar}) => (!$getSidebar ? 'translateX(0)' : 'translateX(-100%)')};
+    transform: ${props => (props.getSidebar ? 'translateX(0)' : 'translateX(-100%)')};
     
   }
 

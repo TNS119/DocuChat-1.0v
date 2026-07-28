@@ -19,7 +19,7 @@ const SideNavBar = ({ sessions = [], activeSessionId, onSelectSession, onDeleteS
     }
 
     return (
-        <SideBarContainer $getSidebar ={getSidebar.sideNavBarStatus}>
+        <SideBarContainer getSidebar ={getSidebar.sideNavBarStatus}>
             
                 <HeadingContianer>
                     <Heading>DOCUCHART</Heading> 
