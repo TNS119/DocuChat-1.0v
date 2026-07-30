@@ -71,8 +71,8 @@ const LoginPage = ({ setIsAuthenticated }) => {
         <OuterContainer>
             <InnerContainer onSubmit={handleSubmit}>
                 <Card>
-                    <Heading>Welcome back</Heading>
-                    <SubHeading>Sign in to continue with your PDF chats</SubHeading>
+                    <Heading>DOCUCHAT</Heading>
+                    <SubHeading>Sign in to chat with your Documents</SubHeading>
 
                     <Field>
                         <Label htmlFor="username">Username</Label>
@@ -113,7 +113,7 @@ const LoginPage = ({ setIsAuthenticated }) => {
                     </Button>
 
                     <LinkText>
-                        New here? <Link to="/register" style={{ color: '#7dd3fc' }}>Create an account</Link>
+                        New here? <Link to="/register" style={{ color: '#7dd4fc' }}>Create an account</Link>
                     </LinkText>
                 </Card>
             </InnerContainer>

@@ -30,6 +30,7 @@ export const Heading = styled.h1`
   color: rgb(16, 189, 242);
   font-family: roboto;
   font-size: 28px;
+  text-align: center;
 `;
 
 export const SubHeading = styled.p`

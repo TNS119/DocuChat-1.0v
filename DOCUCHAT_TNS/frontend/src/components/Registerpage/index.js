@@ -73,7 +73,7 @@ const RegisterPage = () => {
     <PageContainer>
       <FormCard onSubmit={handleSubmit}>
         <Title>Create account</Title>
-        <Subtitle>Join DOCUCHART and start chatting with your PDFs.</Subtitle>
+        <Subtitle>Join DOCUCHART and start chatting with your Documents.</Subtitle>
         <Field>
           <Label htmlFor="username">Username</Label>
           <InputContinaer>
