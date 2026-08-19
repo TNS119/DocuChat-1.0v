@@ -167,7 +167,7 @@ def Rag_core(given_data):
         raise ValueError("GROQ_API_KEY not set in environment")
     
     model = ChatGroq(
-        model="llama-3.3-70b-versatile",
+        model="qwen/qwen3.6-27b",
         api_key=GROQ_API_KEY,
     )
 
