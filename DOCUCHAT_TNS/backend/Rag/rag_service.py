@@ -12,6 +12,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document
 # from langchain_huggingface import HuggingFaceEmbeddings
 # from langchain_huggingface import HuggingFaceEndpointEmbeddings
+from qdrant_client.models import Filter, FieldCondition, MatchValue
 
 from Rag.embeddings import HFEmbedding
 from services.mongodb import (
@@ -20,9 +21,8 @@ from services.mongodb import (
     save_chat_turn,
     get_chat_history
 )
-# from DOCUCHAT_TNS.modal_service.docling_service.documents_reader import read_Document
 from services.modal_service import extract_documents
-from services.vector_db_service import get_vector_store
+from services.qdrant_db_service import get_vector_store
 
 
 
@@ -68,7 +68,6 @@ def Rag_core(given_data):
 
         if not session_exists(session_id, user_id):
             print("Creating Mongodb Session id")
-            # Avoid Mongo DuplicateKeyError by ensuring we only insert
             # when the session does not already exist.
             create_session(
                 session_id,
@@ -101,7 +100,6 @@ def Rag_core(given_data):
     def Pdf_Indexing(file_path, vector_store):
         """
         Indexes a PDF file into the vector store.
-        
         How it works:
         1. Load PDF from file_path
         2. Split text into chunks
@@ -110,9 +108,10 @@ def Rag_core(given_data):
         5. Chroma automatically saves embeddings to disk
         """
         # Adjust path to work from python_services directory
-        # If path doesn't exist, try with parent directory
-        print(f"\n[PDF] Processing File: {file_path}")
+        
+        print(f"\n[DOC] Processing File: {file_path}")
 
+        # If path doesn't exist, try with parent directory
         if not os.path.isfile(file_path):
             raise FileNotFoundError(f"File file not found: {file_path}")
             
@@ -146,14 +145,30 @@ def Rag_core(given_data):
         )
 
         all_splits = text_splitter.split_documents(docs)
+
         print(f"  [OK] Text split into {len(all_splits)} chunks")
 
-        print(f"\n-> Adding {len(all_splits)} document chunks to vector database...")
-        document_ids = vector_store.add_documents(documents=all_splits)
-        print(f"[OK] SUCCESSFULLY added {len(document_ids)} documents")
-        print(f"[OK] Data automatically persisted to disk\n")
+
+        # Adding ownership(user)/session information to every chunk
+        for doc in all_splits:
+            doc.metadata.update({
+                "user_id": str(user_id),
+                "session_id": str(session_id),
+                "topic_name": topic_name,
+            })
+
+
+        print(
+            f"\n-> Adding {len(all_splits)} document chunks to Qdrant..."
+        )
+
+        document_ids = vector_store.add_documents(
+            documents=all_splits
+        )
+
+        print(f"[OK] Added {len(document_ids)} chunks to Qdrant")
+                
         
-        sample = vector_store.get(limit=1, include=["embeddings", "documents"])
 
     if not GROQ_API_KEY:
         raise ValueError("GROQ_API_KEY not set in environment")
@@ -166,7 +181,26 @@ def Rag_core(given_data):
     def Quering(input_query, vector_store):
         
         def retrieve_context(query: str, k: int = 3):
-            retrieved_docs = vector_store.similarity_search(query, k=k)
+            # retrieved_docs = vector_store.similarity_search(query, k=k)
+            
+            search_filter = Filter(
+                must=[
+                    FieldCondition(
+                        key="metadata.user_id",
+                        match=MatchValue(value=str(user_id))
+                    ),
+                    FieldCondition(
+                        key="metadata.session_id",
+                        match=MatchValue(value=str(session_id))
+                    )
+                ]
+            )
+
+            retrieved_docs = vector_store.similarity_search(
+                query,
+                k=k,
+                filter=search_filter
+            )
 
             docs_content = ""
             for doc in retrieved_docs:
@@ -191,7 +225,6 @@ Never reveal your reasoning process.Answer directly without mentioning the PDF u
 Do not output <think>, reasoning, analysis, internal thoughts, or step-by-step deliberation.
 Do not make up facts that are not supported by the PDF context.(halucinate).
 Try to extend the convo within contex for further assistance(only inside pdf context).
-only give text response
 Don't make up any new information:
 Context:{context}"""
 

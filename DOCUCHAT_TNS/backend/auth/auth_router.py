@@ -17,7 +17,7 @@ from services.mongodb import get_session_history
 
 from services.mongodb import delete_session
 
-from services.vector_db_service import delete_vector_db
+from services.qdrant_db_service import delete_vector_db
 
 IS_PRODUCTION = os.getenv("IS_PRODUCTION", "false").lower() == "true"
 
