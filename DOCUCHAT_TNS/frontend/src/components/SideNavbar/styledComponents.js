@@ -176,8 +176,9 @@ export const SessionActionsButton = styled.a`
 
   ${SessionItemWrapper}:hover &{
     opacity: 4;
-    background: ${({ $active }) => ($active ? 'rgba(0, 192, 251, 0.3)' : 'rgba(255,255,255,0.08)')};    
+    background: ${({ $active }) => ($active ? 'rgba(0, 192, 251, 0.3)' : 'rgba(197, 12, 12, 0.32)')};    
   }
+  
 `
 
 export const TrashIconAnchor = styled.div`
@@ -199,7 +200,7 @@ export const SessionActionMenu = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1px 4px;
+  ${'' /* padding: 1px 4px; */}
 
   background-image: linear-gradient(to right, #1cbdd60a, #36dbf414);
   background-color: #061c20;
@@ -223,7 +224,7 @@ export const SessionActionItem = styled.button`
   font-size: 13px;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(221, 14, 14, 0.39);
   }
 `
 

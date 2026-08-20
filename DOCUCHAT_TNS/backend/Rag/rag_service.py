@@ -26,7 +26,6 @@ from services.vector_db_service import get_vector_store
 
 
 
-#Saved upto here 143
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 HF_TOKEN = os.getenv("HF_TOKEN")
 print(f"Debug: GROQ_API_KEY loaded: {'Yes' if GROQ_API_KEY else 'No'}")
@@ -93,12 +92,7 @@ def Rag_core(given_data):
             user_id,
             session_id,
             embeddings
-        )
-        
-
-
-
-            
+        )            
     except Exception as e:
         print(f"Error initializing vector store: {str(e)}")
         raise
@@ -143,8 +137,6 @@ def Rag_core(given_data):
 
         docs = filter_complex_metadata(docs)
 
-
-        # 
         print(f" [OK] Loaded {len(docs)} Docling chunks")
 
         text_splitter = RecursiveCharacterTextSplitter(
@@ -167,7 +159,7 @@ def Rag_core(given_data):
         raise ValueError("GROQ_API_KEY not set in environment")
     
     model = ChatGroq(
-        model="qwen/qwen3.6-27b",
+        model="openai/gpt-oss-120b",
         api_key=GROQ_API_KEY,
     )
 
@@ -189,21 +181,19 @@ def Rag_core(given_data):
 
             # print(f"the pdf lines are {context}")
             print(f"********************the input query is  \"{user_query}\"")
-            system_message = f"""You are a helpful PDF Chatbot.with No hallucinations, only provided contex content as response.
-                                    Use the provided PDF context to answer user questions accurately.
-                                    If the user asks a question that can be answered from the PDF context, answer using the context.
-                                    If the user asks a follow-up question, use the conversation history to understand the reference, but answer based on the PDF context.
-                                    If the PDF does not contain enough information to answer the question, politely say that the information was not found in the 
-                                    uploaded PDF.(initially inform its not there in provided contex and bring back to given context again and dont ask for new context(ignore it))
-                                    provide horizontal seperation lines in between the response section for clarity easy understanding of each part of it only if required.
-                                    Never reveal your reasoning process.
-                                    Answer directly without mentioning the PDF unless the user asks.
-                                    Do not output <think>, reasoning, analysis, internal thoughts, or step-by-step deliberation.
-                                    Do not make up facts that are not supported by the PDF context.(halucinate).
-                                    Try to extend the convo within contex for further assistance(only inside pdf context).
-                                    Don't make up any new information:
-                                Context:
-                                {context}"""
+            system_message = f"""You are a helpful Document Chatbot.with No hallucinations, only provided contex content as response.
+Use the provided PDF context to answer user questions accurately.If the user asks a question that can be answered from the PDF context, answer using the context.
+If the user asks a follow-up question, use the conversation history to understand the reference, but answer based on the PDF context.
+If the PDF does not contain enough information to answer the question, 
+politely say that the information was not found in the uploaded PDF.(initially inform its not there in provided contex and bring back to given context again and dont ask for new context(ignore it))
+provide horizontal seperation lines in between the response section for clarity easy understanding of each part of it only if required.
+Never reveal your reasoning process.Answer directly without mentioning the PDF unless the user asks.
+Do not output <think>, reasoning, analysis, internal thoughts, or step-by-step deliberation.
+Do not make up facts that are not supported by the PDF context.(halucinate).
+Try to extend the convo within contex for further assistance(only inside pdf context).
+only give text response
+Don't make up any new information:
+Context:{context}"""
 
             messages = [
                 {"role": "system", "content": system_message}
@@ -256,7 +246,7 @@ def Rag_core(given_data):
             result = Quering(given_data["query"], vector_store)
 
             # print(result)
-            print(result["answer"])
+            # print(result["answer"])
             answer = clean_response(result["answer"])
 
             return answer
@@ -269,7 +259,7 @@ def Rag_core(given_data):
             result = Quering(given_data["query"], vector_store)
             # print(result["context_used"])
 
-            # print(result["answer"])
+            print(result["answer"])
             answer = clean_response(result["answer"])
             print("Response sent...")
             return answer
@@ -280,3 +270,17 @@ def Rag_core(given_data):
         print(f"Error processing request: {str(e)}")
         raise
     
+
+
+# Reference Prompt
+# system_message = f"""You are a document chatbot. Answer only from the provided context and conversation history.
+# Rules:
+# Give only the final answer. Never output reasoning, analysis, <think>, internal thoughts, or deliberation.
+# If the answer is supported by the context, answer accurately and directly.
+# For follow-up questions, use conversation history to resolve references, but keep the answer grounded in the provided context.
+# If the context does not contain enough information, say: "The information was not found in the provided context." Do not guess or use outside knowledge.
+# Do not mention the PDF/context unless necessary or explicitly asked.
+# Keep the conversation focused on information available in the context; do not ask for new context.
+# Use horizontal separators (---) between major response sections only when they improve clarity.
+# Never invent, assume, or add unsupported information.
+# Context:{context}"""

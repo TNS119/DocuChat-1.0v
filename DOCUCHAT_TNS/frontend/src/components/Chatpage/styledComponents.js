@@ -4,7 +4,7 @@ export const ChatContainer= styled.div`
     background-image: url('https://res.cloudinary.com/da00pyggy/image/upload/v1780423651/chat_bg_q2psr4.jpg');
     background-size: cover;
     height: 100vh;
-    padding: 24px 24px 24px 0px;
+    padding: 24px 0px 24px 0px;
     color: #ffffff;
     font-family: roboto;
     display:flex;
@@ -38,7 +38,7 @@ export const Backdrop = styled.div`
 `
 
 export const MessagesSubContainer = styled.div`
-    width: ${props => (!props.getSidebar ? '94%' : '10000%')} ;
+    width: ${props => (!props.getSidebar ? '100%' : '10000%')} ;
     height: 100%;
     display:flex;
     flex-direction: column;
@@ -47,6 +47,9 @@ export const MessagesSubContainer = styled.div`
     overflow: hidden; 
 
     transition: width 0.4s ease-in-out;
+    @media (max-width: 768px) {
+        padding: 3%;
+    }
     
 `
 
@@ -59,6 +62,9 @@ export const InputTab = styled.form`
     display:flex;
     align-items:center;
     flex-shrink: 0;
+    @media (max-width: 768px) {
+        width: 100%;
+    }
 `
 export const InputBox = styled.input`
     width: 100%;
@@ -109,6 +115,11 @@ export const MessagesContainer = styled.div`
     &::-webkit-scrollbar {
         display: none;
     }
+
+    @media (max-width: 768px) {
+        margin: 2px 4px;
+        width: 100%;
+    }
 `
 
 export const LoadingContainer = styled.div`
@@ -129,15 +140,16 @@ export const ChatHeadSection = styled.div`
     padding: 12px;
     display:flex;
     align-items:center;
+    margin-left: 2%;
 `
  
 
 export const HeadContainer = styled.div`
     width: 62%;
-    margin-left: auto;
+    margin-left: 24px;
 `
 export const TopicHeading = styled.h1`
-    font-weight: bold;
+    font-weight: 400;
     text-decoration: underline;
 `
 export const MenuToggleButton = styled.button`
@@ -151,7 +163,7 @@ export const MenuToggleButton = styled.button`
     margin-right: 16px;
 
     @media (min-width: 768px){
-        display : ${props =>(props.getSidebar  ? "flex":"none")};
+        display : ${props => (props.getSidebar  ? "flex":"none")};
     }
 `
 
@@ -163,6 +175,10 @@ export const BackButton =styled.button`
     color: #ffffff;
     cursor: pointer;
     width: 30px;
+    
+    @media (min-width: 768px){
+        margin-top: 8px;
+    }
 `
 export const RetrySection = styled.div`
   display:flex;

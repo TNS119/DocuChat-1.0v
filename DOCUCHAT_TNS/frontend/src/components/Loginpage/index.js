@@ -72,7 +72,7 @@ const LoginPage = ({ setIsAuthenticated }) => {
             <InnerContainer onSubmit={handleSubmit}>
                 <Card>
                     <Heading>DOCUCHAT</Heading>
-                    <SubHeading>Sign in to chat with your Documents</SubHeading>
+                    <SubHeading>Signin to chat with your Documents</SubHeading>
 
                     <Field>
                         <Label htmlFor="username">Username</Label>

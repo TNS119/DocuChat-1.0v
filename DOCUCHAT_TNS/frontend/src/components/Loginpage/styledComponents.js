@@ -37,6 +37,7 @@ export const SubHeading = styled.p`
   margin: 0 0 20px;
   color: #dbeafe;
   font-size: 15px;
+  text-align: center;
 `;
 
 export const Field = styled.div`

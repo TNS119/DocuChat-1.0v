@@ -58,8 +58,8 @@ function App() {
           <p>Checking your session...</p>
 
           <small>
-            If this is your first visit, the server may take up to a minute to
-            start.
+            The server may take up to a minute to
+            start.Please wait...
           </small>
         </div>
       </div>

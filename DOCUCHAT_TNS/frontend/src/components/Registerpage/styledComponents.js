@@ -46,11 +46,13 @@ export const Title = styled.h1`
   font-family: roboto;
   color: rgb(16, 189, 242);
   margin: 0 0 8px;
+  text-align: center;
 `;
 
 export const Subtitle = styled.p`
   color: #dbeafe;
   margin: 0 0 20px;
+  text-align: center;
 `;
 
 export const Field = styled.div`
@@ -67,8 +69,18 @@ export const Label = styled.label`
 
 export const Input = styled.input`
   width: 100%;
-  background-color: rgba(16, 189, 242, 0.14) !important;
+  background-color: transparent !important;
   border: 1px solid rgb(16, 189, 242);
+  border-radius: 20px;
+  color: #ffffff;
+  padding: 10px 12px;
+  outline: none;
+`;
+
+export const PasswordInput = styled.input`
+  width: 100%;
+  background-color: transparent !important;
+  border: 0px;
   border-radius: 20px;
   color: #ffffff;
   padding: 10px 12px;

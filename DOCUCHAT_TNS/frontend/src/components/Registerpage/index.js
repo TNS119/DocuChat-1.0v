@@ -12,6 +12,7 @@ import {
   InputContinaer,
   Input,
   SubmitButton,
+  PasswordInput,
   PasswordShowButton,
   Message,
   FooterText
@@ -73,7 +74,7 @@ const RegisterPage = () => {
     <PageContainer>
       <FormCard onSubmit={handleSubmit}>
         <Title>Create account</Title>
-        <Subtitle>Join DOCUCHART and start chatting with your Documents.</Subtitle>
+        <Subtitle>Join and start chating with your Documents.</Subtitle>
         <Field>
           <Label htmlFor="username">Username</Label>
           <InputContinaer>
@@ -92,7 +93,7 @@ const RegisterPage = () => {
       <Field>
           <Label htmlFor="password">Password</Label>
           <InputContinaer>
-          <Input
+          <PasswordInput
               id="password"
               type = {passwordType}
               value={formData.password}
@@ -104,7 +105,6 @@ const RegisterPage = () => {
               {passwordType ==="password"? <FaEye size={20}/> :<FaEyeSlash size={20}/>}
           </PasswordShowButton>
           </InputContinaer>
-          
       </Field>
 
         <SubmitButton type="submit" disabled={loading}>

@@ -29,6 +29,7 @@ app.include_router(auth_router)
 
 origins = [
     "http://localhost:3000",
+    "http://localhost:3000/login",
     "http://127.0.0.1:3000",
     "http://192.168.1.5:3000",
     "https://docu-chat-tns.vercel.app",

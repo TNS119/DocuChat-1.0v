@@ -165,12 +165,13 @@ const Home = ({ authFetch }) => {
             </UploadWrapper>
 
             <ActionRow>
-                <SubmitButton type="submit" disabled={!file}>Submit</SubmitButton>
                 {latestSession && (
                     <SubmitButton type="button" onClick={() => navigate('/chat', { state: { session_id: latestSession.session_id, title: latestSession.topic } })}>
                         Continue to chat
                     </SubmitButton>
                 )}
+                <SubmitButton type="submit" disabled={!file}>Submit</SubmitButton>
+                
             </ActionRow>
         </FormElement>
     )

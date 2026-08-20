@@ -62,7 +62,7 @@ export const SubmitButton = styled.button`
     padding: 8px 12px;
     margin-top: 8px;
     border-radius: 20px;
-    width: 30%;
+    ${'' /* width: 30%; */}
     cursor: pointer;
     transition: all 0.3s ease;
     
@@ -80,9 +80,10 @@ export const SubmitButton = styled.button`
 
 export const ActionRow = styled.div`
     display: flex;
-    gap: 10px;
+    justify-content: space-between;
     flex-wrap: wrap;
     align-items: center;
+    margin-right: 2%;
 `
 
 export const RetryTxt = styled.p`
