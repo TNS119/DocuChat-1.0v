@@ -1,61 +1,88 @@
 # DocuChat
 
-AI-powered Document Chatbot using Retrieval-Augmented Generation (RAG).
+DocuChat is an AI-powered document chatbot. Upload a PDF, then ask questions about its contents using retrieval-augmented generation (RAG).
 
-## Overview
+## Architecture
 
-This repository contains the DocuChat application, which lets users upload documents and ask questions about their contents. It uses a React frontend, a Node.js backend, and a Python AI service to process documents, generate embeddings, and answer queries from the document context.
+The project is split into three parts:
 
-## Contents
+- `DOCUCHAT_TNS/frontend/` - React web application
+- `DOCUCHAT_TNS/backend/` - FastAPI application for authentication, uploads, and chat requests
+- `DOCUCHAT_TNS/modal_service/` - document-processing service used by the RAG pipeline
 
-- `DOCUCHAT/` - main application folder
-  - `newapp/` - frontend and backend application code
-  - `backend/python_services/Rag_service/` - Python service for document processing and RAG logic
+Uploaded documents are processed with Docling and LangChain, stored through vector-search integrations, and queried with a Groq-backed language model. MongoDB stores application data and Cloudinary stores uploaded PDFs.
 
 ## Features
 
-- Document upload and ingestion
-- Document text extraction and chunking
-- Vector embeddings with ChromaDB
-- Semantic search over document content
-- RAG-powered Q&A using a Groq LLM backend
-- Uses `langchain-docling` for document loading and processing
+- User registration and JWT authentication
+- PDF upload and document ingestion
+- Document extraction and chunking with `langchain-docling`
+- Semantic search with ChromaDB and Qdrant integrations
+- RAG-powered question answering with Groq
+- Cloudinary PDF storage
 
-## How to run
+## Prerequisites
 
-1. Open the project in your terminal:
+- Python 3.10 or newer
+- Node.js and npm
+- MongoDB, Groq, Cloudinary, Hugging Face, and Qdrant credentials
+
+## Configuration
+
+Copy `DOCUCHAT_TNS/example.env` to `DOCUCHAT_TNS/.env` and replace the placeholder values:
 
 ```powershell
-cd path\to\DOCUCHAT\newapp
+Copy-Item DOCUCHAT_TNS\example.env DOCUCHAT_TNS\.env
 ```
 
-2. Start the frontend:
+The environment file contains credentials for Groq, Hugging Face, MongoDB, Cloudinary, Modal, JWT authentication, and Qdrant. Keep `.env` private and do not commit it.
+
+## Run locally
+
+Start each service in a separate terminal from the repository root.
+
+### 1. FastAPI backend
 
 ```powershell
+cd DOCUCHAT_TNS\backend
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+uvicorn main:app --reload
+```
+
+The API is available at `http://127.0.0.1:8000`. The interactive API documentation is at `http://127.0.0.1:8000/docs`.
+
+### 2. React frontend
+
+```powershell
+cd DOCUCHAT_TNS\frontend
 npm install
 npm start
 ```
 
-3. Start the backend in a separate terminal:
+The web application opens at `http://localhost:3000`.
+
+### 3. Modal document service
+
+The document-processing service is in `DOCUCHAT_TNS/modal_service`. Deploy or run it using the Modal CLI and set the resulting URL as `MODAL_URL` in `.env`. The exact command depends on the Modal app configuration in `modal_service/app.py`.
+
+## API overview
+
+- `POST /auth/...` - registration and login routes
+- `POST /process/{topic}` - upload and process a PDF for an authenticated session
+- `POST /response` - ask a question about a processed document
+- `GET /` - backend health check
+
+Both document processing and question requests require a valid JWT bearer token.
+
+## Development notes
+
+- ChromaDB data is stored under `DOCUCHAT_TNS/backend/chroma_langchain_db/`.
+- On Windows PowerShell, enable script execution for the current session if virtual-environment activation is blocked:
 
 ```powershell
-cd backend
-npm install
-node server.js
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 ```
 
-4. Start the Python AI service in another terminal:
-
-```powershell
-cd backend\python_services
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-python Rag_service\main.py
-```
-
-## Notes
-
-- The service uses `langchain-docling` for document loading and chunking.
-- The project stores document embeddings in a local ChromaDB directory.
-- If you are using Windows PowerShell, run `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass` once before activating `.venv`.
+- Run frontend tests with `npm test` and create a production build with `npm run build` from `DOCUCHAT_TNS/frontend`.
